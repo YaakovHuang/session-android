@@ -1148,6 +1148,11 @@ interface TextSecurePreferences {
         fun getUser(context: Context): String? {
             return getStringPreference(context, KEY_USER, null)
         }
+
+        @JvmStatic
+        fun getThemeStyle(context: Context): String {
+            return getStringPreference(context, SELECTED_STYLE, CLASSIC_DARK)!!
+        }
     }
 }
 

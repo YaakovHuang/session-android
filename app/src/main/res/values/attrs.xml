@@ -376,6 +376,13 @@
         <attr name="civ_circle_background_color" format="color" />
     </declare-styleable>
 
+    <declare-styleable name="StateLayout">
+        <attr name="errorDrawable" format="reference" />
+        <attr name="emptyDrawable" format="reference" />
+        <attr name="progressView" format="reference" />
+        <attr name="emptyString" format="reference" />
+    </declare-styleable>
+
     <attr name="preferenceCornerRadius" format="dimension|reference" />
     <attr name="reactionsPillSelectedTextColor" format="color|reference" />
     <attr name="reactionsPillSelectedBackground" format="color|reference" />
@@ -402,5 +409,7 @@
     <attr name="thirdTextColor" format="reference|color" />
     <attr name="walletBgColor" format="reference|color" />
     <attr name="walletTextColor" format="reference|color" />
+    <attr name="followBgColor" format="reference|color" />
+    <attr name="editBgColor" format="reference|color" />
 
 </resources>

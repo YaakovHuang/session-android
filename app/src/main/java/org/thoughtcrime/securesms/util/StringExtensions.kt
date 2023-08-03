@@ -7,6 +7,8 @@ import android.icu.util.ULocale
 import android.net.Uri
 import android.text.Editable
 import org.thoughtcrime.securesms.database.room.Wallet
+import network.qki.messenger.R
+import org.thoughtcrime.securesms.ApplicationContext
 import org.thoughtcrime.securesms.et.Media
 import org.web3j.crypto.Bip32ECKeyPair
 import org.web3j.crypto.Credentials
@@ -17,6 +19,7 @@ import java.io.File
 import java.lang.Character.codePointCount
 import java.lang.Character.offsetByCodePoints
 import java.net.URL
+import java.text.SimpleDateFormat
 import java.util.*
 
 fun String?.safeTrim() = if (this.isNullOrBlank()) null else this.trim()
@@ -218,3 +221,22 @@ fun String?.formatMediaUrl(): List<String> = this?.run {
     }
     list
 } ?: emptyList()
+
+fun Date?.dateDifferenceDesc(): String? {
+    val now = Date()
+    var res: String? = ""
+    if (null != this) {
+        val preTime = now.time - this.time
+        res = if (preTime < 3600000L) {
+            String.format(ApplicationContext.context.getString(R.string.x_minutes_ago), (preTime / 60000L).toString())
+        } else if (preTime < 86400000L) {
+            String.format(ApplicationContext.context.getString(R.string.x_hours_ago), (preTime / 3600000L).toString())
+        } else if (preTime < 31536000000L) {
+            //String.format(ApplicationContext.context.getString(R.string.x_days_ago), (preTime / 86400000L).toString())
+            SimpleDateFormat("yyyy-MM-dd HH:mm").format(this)
+        } else {
+            ""
+        }
+    }
+    return res
+}

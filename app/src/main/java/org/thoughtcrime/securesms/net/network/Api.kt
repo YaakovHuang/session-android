@@ -61,4 +61,37 @@ interface Api {
     @GET("/api/v0/users/main")
     suspend fun loadUserInfo(@Query("user_address") address: String): BaseResponse<UserInfo?>
 
+    @Headers(URL_BASE)
+    @GET("/api/v0/tweets/timeline")
+    suspend fun loadETTimeline(@Query("user_address") address: String): BaseResponse<List<ET>?>
+
+    @Headers(URL_BASE)
+    @FormUrlEncoded
+    @POST("/api/v0/users/follow")
+    suspend fun follow(@Field("user_address") address: String): BaseResponse<Unit?>
+
+    @Headers(URL_BASE)
+    @FormUrlEncoded
+    @POST("/api/v0/users/cancelFollow")
+    suspend fun cancelFollow(@Field("user_address") address: String): BaseResponse<Unit?>
+
+    @Headers(URL_BASE)
+    @GET("/api/v0/users/follow")
+    suspend fun loadFollowing(@Query("page") page: Int): BaseResponse<List<User>?>
+
+    @Headers(URL_BASE)
+    @GET("/api/v0/users/fans")
+    suspend fun loadFollowers(@Query("page") page: Int): BaseResponse<List<User>?>
+
+    @Headers(URL_BASE)
+    @FormUrlEncoded
+    @POST("/api/v0/tweets/like")
+    suspend fun like(@Field("tw_address") twAddress: String): BaseResponse<Unit?>
+
+    @Headers(URL_BASE)
+    @FormUrlEncoded
+    @POST("/api/v0/users/update")
+    suspend fun updateUser(
+        @Field("avatar") avatar: String, @Field("nickname") nickname: String, @Field("desc") desc: String, @Field("sex") sex: String, @Field("sign") sign: String, @Field("updateSignUnix") updateSignUnix: String
+    ): BaseResponse<Unit?>
 }

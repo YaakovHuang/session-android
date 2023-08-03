@@ -1,26 +1,26 @@
 package org.thoughtcrime.securesms.home
 
-import android.content.Intent
-import android.os.Bundle
 import androidx.activity.viewModels
 import androidx.lifecycle.lifecycleScope
 import com.hjq.language.MultiLanguages
 import com.lxj.xpopup.XPopup
-import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collectLatest
-import network.qki.messenger.R
 import network.qki.messenger.databinding.ActivitySettingBinding
 import org.session.libsession.utilities.CacheDataManager
-import org.session.libsession.utilities.TextSecurePreferences
 import org.session.libsession.utilities.getColorFromAttr
-import org.thoughtcrime.securesms.PassphraseRequiredActionBarActivity
-import org.thoughtcrime.securesms.preferences.NotificationSettingsActivity
-import org.thoughtcrime.securesms.preferences.PrivacySettingsActivity
 import org.thoughtcrime.securesms.util.ThemeState
 import org.thoughtcrime.securesms.util.push
 import org.thoughtcrime.securesms.util.themeState
 import org.thoughtcrime.securesms.util.toastOnUi
 import java.util.Locale
+import android.content.Intent
+import android.os.Bundle
+import dagger.hilt.android.AndroidEntryPoint
+import network.qki.messenger.R
+import org.session.libsession.utilities.TextSecurePreferences
+import org.thoughtcrime.securesms.PassphraseRequiredActionBarActivity
+import org.thoughtcrime.securesms.preferences.NotificationSettingsActivity
+import org.thoughtcrime.securesms.preferences.PrivacySettingsActivity
 import javax.inject.Inject
 
 
@@ -246,6 +246,5 @@ class SettingActivity : PassphraseRequiredActionBarActivity() {
         binding.switchLinkPreview.isChecked = textSecurePreferences.isLinkPreviewsEnabled()
         binding.switchCall.isChecked = textSecurePreferences.isCallNotificationsEnabled()
     }
-
 
 }

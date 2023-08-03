@@ -58,4 +58,32 @@ class ApiService {
     suspend fun loadUserInfo(address: String): UserInfo? {
         return api.loadUserInfo(address).Data
     }
+
+    suspend fun loadETTimeline(address: String): List<ET>? {
+        return api.loadETTimeline(address).Data
+    }
+
+    suspend fun follow(address: String): BaseResponse<Unit?> {
+        return api.follow(address)
+    }
+
+    suspend fun cancelFollow(address: String): BaseResponse<Unit?> {
+        return api.cancelFollow(address)
+    }
+
+    suspend fun loadFollowing(page: Int): List<User>? {
+        return api.loadFollowing(page).Data
+    }
+
+    suspend fun loadFollowers(page: Int): List<User>? {
+        return api.loadFollowers(page).Data
+    }
+
+    suspend fun like(tvAddress: String): BaseResponse<Unit?> {
+        return api.like(tvAddress)
+    }
+
+    suspend fun updateUser(avatar: String, nickname: String, desc: String, sex: String, sign: String, updateSignUnix: String): BaseResponse<Unit?> {
+        return api.updateUser(avatar, nickname, desc, sex, sign, updateSignUnix)
+    }
 }

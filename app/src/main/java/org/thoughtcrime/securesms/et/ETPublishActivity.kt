@@ -2,43 +2,59 @@ package org.thoughtcrime.securesms.et
 
 import android.Manifest
 import android.content.Intent
+import android.graphics.Color
 import android.os.Bundle
 import android.text.Editable
+import android.text.TextUtils
 import android.text.TextWatcher
 import android.view.LayoutInflater
 import android.view.MotionEvent
+import android.widget.ImageView
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
 import androidx.core.view.isVisible
+import androidx.recyclerview.widget.DividerItemDecoration
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.google.android.flexbox.FlexboxLayout
+import com.lxj.xpopup.XPopup
+import com.lxj.xpopup.util.SmartGlideImageLoader
 import dagger.hilt.android.AndroidEntryPoint
 import network.qki.messenger.R
 import network.qki.messenger.databinding.ActivityEtPublishBinding
 import network.qki.messenger.databinding.ItemEtAttachBinding
-import network.qki.messenger.databinding.ItemPublishAttachBinding
 import org.greenrobot.eventbus.EventBus
 import org.session.libsession.utilities.getColorFromAttr
 import org.thoughtcrime.securesms.PassphraseRequiredActionBarActivity
-import org.thoughtcrime.securesms.constants.AppConst
-import org.thoughtcrime.securesms.net.network.IpfsResponse
+import org.thoughtcrime.securesms.mediasend.Media
+import org.thoughtcrime.securesms.mediasend.MediaSelectActivity
+import org.thoughtcrime.securesms.mediasend.MediaSendActivity
 import org.thoughtcrime.securesms.permissions.Permissions
+import org.thoughtcrime.securesms.util.ContextUtil
 import org.thoughtcrime.securesms.util.GlideHelper
-import org.thoughtcrime.securesms.util.Logger
+import org.thoughtcrime.securesms.util.dateDifferenceDesc
+import org.thoughtcrime.securesms.util.formatMediaUrl
 import org.thoughtcrime.securesms.util.formatMedias
 import org.thoughtcrime.securesms.util.parcelable
+import org.thoughtcrime.securesms.util.toastOnUi
+import java.util.Date
 
 @AndroidEntryPoint
 class ETPublishActivity : PassphraseRequiredActionBarActivity() {
 
     private lateinit var binding: ActivityEtPublishBinding
 
-    private val viewModel by viewModels<ETPublishViewModel>()
+    private val viewModel by viewModels<ETViewModel>()
 
     var et: ET? = null
-    private var attaches = arrayListOf<String>()
 
     private lateinit var resultLauncher: ActivityResultLauncher<Intent>
+
+    private val adapter by lazy {
+        PublishAttachmentAdapter()
+    }
+
 
     override fun onCreate(savedInstanceState: Bundle?, ready: Boolean) {
         super.onCreate(savedInstanceState, ready)
@@ -47,22 +63,10 @@ class ETPublishActivity : PassphraseRequiredActionBarActivity() {
         setSupportActionBar(binding.toolbar)
         window?.statusBarColor = getColorFromAttr(R.attr.chatsToolbarColor)
         resultLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
-            val data = result.data
-            val clipData = data?.clipData
-            if (clipData != null) {
-                for (i in 0 until clipData.itemCount) {
-                    val uri = clipData.getItemAt(i).uri
-                    Logger.d("path = ${uri.path}")
-                    viewModel.uploadFile({}, {}, uri)
-                }
-            } else {
-                data?.data?.let {
-
-                    Logger.d("path = ${it.path}")
-                    viewModel.uploadFile({}, {}, it)
-                }
+            result.data?.apply {
+                val medias = getParcelableArrayListExtra<Media>(MediaSendActivity.EXTRA_MEDIA)
+                adapter.setNewInstance(medias)
             }
-
         }
         et = intent.parcelable(ETFragment.KEY_ET)
     }
@@ -72,6 +76,23 @@ class ETPublishActivity : PassphraseRequiredActionBarActivity() {
         super.initViews()
         initForwardLayout()
         binding.apply {
+            recyclerView.layoutManager = LinearLayoutManager(this@ETPublishActivity, RecyclerView.HORIZONTAL, false)
+            recyclerView.adapter = adapter
+            val decoration = DividerItemDecoration(this@ETPublishActivity, LinearLayoutManager.HORIZONTAL)
+            decoration.setDrawable(ContextUtil.requireDrawable(this@ETPublishActivity, R.drawable.shape_space_divider))
+            recyclerView.addItemDecoration(decoration)
+            adapter.addChildClickViewIds(R.id.ivDel)
+            adapter.setOnItemChildClickListener { adapter, v, position ->
+                when (v.id) {
+                    R.id.ivDel -> {
+                        adapter.removeAt(position)
+                    }
+
+                    else -> {
+
+                    }
+                }
+            }
             etContent.addTextChangedListener(object : TextWatcher {
                 override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {
 
@@ -103,21 +124,24 @@ class ETPublishActivity : PassphraseRequiredActionBarActivity() {
                 finish()
             }
             tvPublish.setOnClickListener {
-                var data = etContent.text.toString().trim()
+                var data = etContent.text.toString()
+                var medias = adapter.data as List<Media>
+                if (TextUtils.isEmpty(data)) {
+                    toastOnUi(R.string.content_not_empty)
+                    return@setOnClickListener
+                }
                 viewModel.publish({
                     showLoading()
                 }, {
                     hideLoading()
-                }, data, attaches.joinToString(","), et?.TwAddress ?: "")
-                Logger.d("attaches = ${attaches.joinToString(",")}")
+                }, data, medias, et?.TwAddress ?: "")
             }
             ivUpload.setOnClickListener {
                 Permissions.with(this@ETPublishActivity).request(Manifest.permission.CAMERA).onAnyResult {
-                    var intent = Intent(Intent.ACTION_PICK)
-                    intent.type = "image/*,video/*"
-                    intent.putExtra(Intent.EXTRA_ALLOW_MULTIPLE, true)
+                    var intent = Intent(this@ETPublishActivity, MediaSelectActivity::class.java)
                     resultLauncher.launch(intent)
                 }.execute()
+
             }
         }
     }
@@ -134,8 +158,12 @@ class ETPublishActivity : PassphraseRequiredActionBarActivity() {
             }
         }
         viewModel.ipfsLiveData.observe(this) {
-            if (it != null && !it.Hash.isNullOrBlank()) {
-                updateFlowLayout(it)
+            var medias = (adapter.data as List<Media>).toMutableList()
+            medias.forEachIndexed { index, media ->
+                if (it?.uri?.path.equals(media.uri.path)) {
+                    medias[index] = it!!
+                    adapter.notifyItemChanged(index)
+                }
             }
         }
     }
@@ -145,6 +173,7 @@ class ETPublishActivity : PassphraseRequiredActionBarActivity() {
             binding.layoutForward.rootForward.isVisible = true
             binding.layoutForward.tvUserName.text = et?.UserInfo?.Nickname
             binding.layoutForward.tvContent.text = et?.Content
+            binding.layoutForward.tvTime.text = "${Date(et?.CreatedAt?.toLong()?.times(1000) ?: System.currentTimeMillis()).dateDifferenceDesc()}"
             GlideHelper.showImage(
                 binding.layoutForward.ivAvatar,
                 et?.UserInfo?.Avatar ?: "",
@@ -155,10 +184,14 @@ class ETPublishActivity : PassphraseRequiredActionBarActivity() {
             binding.layoutForward.flexbox.removeAllViews()
             et?.Attachment?.trim()?.let { it ->
                 val medias = it.formatMedias()
+                val urls = it.formatMediaUrl()
                 if (!medias.isNullOrEmpty()) {
                     for (i in medias.indices) {
                         val media = medias[i]
                         val attachBinding = ItemEtAttachBinding.inflate(LayoutInflater.from(this), binding.layoutForward.root, false)
+                        attachBinding.ivAttach.setOnClickListener {
+                            showGallery(attachBinding.ivAttach, i, urls)
+                        }
                         binding.layoutForward.flexbox.addView(attachBinding.root)
                         val lp = attachBinding.root.layoutParams as FlexboxLayout.LayoutParams
                         lp.flexBasisPercent = 0.3f
@@ -186,23 +219,13 @@ class ETPublishActivity : PassphraseRequiredActionBarActivity() {
         }
     }
 
-    private fun updateFlowLayout(ipfs: IpfsResponse) {
-        val attachBinding = ItemPublishAttachBinding.inflate(LayoutInflater.from(this), binding.flexbox, false)
-        binding.flexbox.addView(attachBinding.root)
-        val lp = attachBinding.root.layoutParams as FlexboxLayout.LayoutParams
-        lp.flexBasisPercent = 0.3f
-        GlideHelper.showImage(
-            attachBinding.ivAttach,
-            "${AppConst.URLS.IPFS_SCAN}/${ipfs.Hash}",
-            8,
-            R.drawable.ic_pic_default,
-            R.drawable.ic_pic_default
-        )
-        attaches.add("${AppConst.URLS.IPFS_SCAN}/${ipfs.Hash}?filename=${ipfs.Name}")
-        attachBinding.ivDel.setOnClickListener {
-            binding.flexbox.removeView(attachBinding.root)
-            attaches.remove("${AppConst.URLS.IPFS_SCAN}/${ipfs.Hash}?filename=${ipfs.Name}")
-        }
-    }
+    private fun showGallery(imageView: ImageView, position: Int, urls: List<String>) {
+        XPopup.Builder(this)
+            .isTouchThrough(true)
+            .asImageViewer(imageView, position, urls, false, true, -1, -1, 0, false, Color.rgb(32, 36, 46), { popupView, i ->
 
+            }, SmartGlideImageLoader(), null)
+            .show()
+
+    }
 }

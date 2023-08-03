@@ -1,5 +1,6 @@
 package org.thoughtcrime.securesms.et
 
+import android.content.Intent
 import android.graphics.Color
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -19,9 +20,12 @@ import network.qki.messenger.databinding.LayoutEtDetailHeaderBinding
 import org.session.libsession.utilities.getColorFromAttr
 import org.thoughtcrime.securesms.PassphraseRequiredActionBarActivity
 import org.thoughtcrime.securesms.util.GlideHelper
+import org.thoughtcrime.securesms.util.dateDifferenceDesc
 import org.thoughtcrime.securesms.util.formatMediaUrl
 import org.thoughtcrime.securesms.util.formatMedias
 import org.thoughtcrime.securesms.util.parcelable
+import org.thoughtcrime.securesms.util.show
+import java.util.Date
 
 @AndroidEntryPoint
 class ETDetailActivity : PassphraseRequiredActionBarActivity() {
@@ -29,7 +33,7 @@ class ETDetailActivity : PassphraseRequiredActionBarActivity() {
     private lateinit var binding: ActivityEtDetailBinding
     private lateinit var headerBinding: LayoutEtDetailHeaderBinding
 
-    private val viewModel by viewModels<ETDetailViewModel>()
+    private val viewModel by viewModels<ETViewModel>()
 
     var et: ET? = null
 
@@ -109,8 +113,15 @@ class ETDetailActivity : PassphraseRequiredActionBarActivity() {
             headerBinding.tvContent.text = Content
             headerBinding.ivFavorite.isSelected = isTwLike
             headerBinding.tvFavoriteNum.text = "$LikeCount"
+            if (isTwLike) {
+                headerBinding.tvFavoriteNum.setTextColor(getColor(R.color.colorF03738))
+            } else {
+                headerBinding.tvFavoriteNum.setTextColor(getColorFromAttr(android.R.attr.textColorTertiary))
+            }
+
             headerBinding.tvCommentNum.text = "$CommentCount"
             headerBinding.tvForwardNum.text = "$ForwardCount"
+            headerBinding.tvTime.text = "${Date(CreatedAt?.toLong()?.times(1000) ?: System.currentTimeMillis()).dateDifferenceDesc()}"
             GlideHelper.showImage(
                 headerBinding.ivAvatar,
                 UserInfo?.Avatar ?: "",
@@ -139,15 +150,7 @@ class ETDetailActivity : PassphraseRequiredActionBarActivity() {
                             R.drawable.ic_pic_default,
                             R.drawable.ic_pic_default
                         )
-                        if (i >= 8 && medias.size > 9) {
-                            attachBinding.ivAttach.foreground = getDrawable(R.drawable.shape_pic_foreground)
-                            attachBinding.tvNum.isVisible = true
-                            attachBinding.tvNum.text = "+${medias.size - 9}"
-                            break
-                        } else {
-                            attachBinding.ivAttach.foreground = null
-                            attachBinding.tvNum.isVisible = false
-                        }
+                        attachBinding.ivAttach.foreground = null
                     }
                 }
             }
@@ -156,6 +159,7 @@ class ETDetailActivity : PassphraseRequiredActionBarActivity() {
                 headerBinding.layoutForward.rootForward.isVisible = true
                 headerBinding.layoutForward.tvUserName.text = OriginTweet?.UserInfo?.Nickname
                 headerBinding.layoutForward.tvContent.text = OriginTweet?.Content
+                headerBinding.tvTime.text = "${Date(OriginTweet?.CreatedAt?.toLong()?.times(1000) ?: System.currentTimeMillis()).dateDifferenceDesc()}"
                 GlideHelper.showImage(
                     headerBinding.layoutForward.ivAvatar,
                     OriginTweet?.UserInfo?.Avatar ?: "",
@@ -166,10 +170,14 @@ class ETDetailActivity : PassphraseRequiredActionBarActivity() {
                 headerBinding.layoutForward.flexbox.removeAllViews()
                 OriginTweet?.Attachment?.trim()?.let { it ->
                     val medias = it.formatMedias()
+                    val urls = it.formatMediaUrl()
                     if (!medias.isNullOrEmpty()) {
                         for (i in medias.indices) {
                             val media = medias[i]
                             val attachBinding = ItemEtAttachBinding.inflate(LayoutInflater.from(this@ETDetailActivity), headerBinding.layoutForward.root, false)
+                            attachBinding.ivAttach.setOnClickListener {
+                                showGallery(attachBinding.ivAttach, i, urls)
+                            }
                             headerBinding.layoutForward.flexbox.addView(attachBinding.root)
                             val lp = attachBinding.root.layoutParams as FlexboxLayout.LayoutParams
                             lp.flexBasisPercent = 0.3f
@@ -200,6 +208,30 @@ class ETDetailActivity : PassphraseRequiredActionBarActivity() {
             }
             binding.llSend.setOnClickListener {
                 sendComment()
+            }
+            headerBinding.llFavorite.setOnClickListener {
+                viewModel.like({
+                    et?.apply {
+                        isTwLike = !isTwLike
+                        LikeCount = if (isTwLike) {
+                            LikeCount?.plus(1)
+                        } else {
+                            LikeCount?.minus(1)
+                        }
+                        headerBinding.ivFavorite.isSelected = isTwLike
+                        headerBinding.tvFavoriteNum.text = "$LikeCount"
+                        if (isTwLike) {
+                            headerBinding.tvFavoriteNum.setTextColor(getColor(R.color.colorF03738))
+                        } else {
+                            headerBinding.tvFavoriteNum.setTextColor(getColorFromAttr(android.R.attr.textColorTertiary))
+                        }
+                    }
+                }, {}, et!!)
+            }
+            headerBinding.llForward.setOnClickListener {
+                val intent = Intent(this@ETDetailActivity, ETPublishActivity::class.java)
+                intent.putExtra(ETFragment.KEY_ET, et)
+                show(intent)
             }
         }
     }
