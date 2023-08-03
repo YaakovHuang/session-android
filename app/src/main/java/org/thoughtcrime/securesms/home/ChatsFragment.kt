@@ -105,7 +105,6 @@ class ChatsFragment : BaseFragment<ChatsViewModel>(R.layout.fragment_chats),
     lateinit var textSecurePreferences: TextSecurePreferences
 
     private val globalSearchViewModel by viewModels<GlobalSearchViewModel>()
-    private val homeViewModel by viewModels<HomeViewModel>()
 
     private val publicKey: String
         get() = textSecurePreferences.getLocalNumber()!!
@@ -373,7 +372,7 @@ class ChatsFragment : BaseFragment<ChatsViewModel>(R.layout.fragment_chats),
 
         // If the theme hasn't changed then start observing updates again (if it does change then we
         // will recreate the activity resulting in it responding to changes multiple times)
-        if ((activity as HomeActivity).currentThemeState == textSecurePreferences.themeState() && !homeViewModel.getObservable(
+        if ((activity as HomeActivity).currentThemeState == textSecurePreferences.themeState() && !viewModel.getObservable(
                 requireContext()
             ).hasActiveObservers()
         ) {
@@ -385,7 +384,7 @@ class ChatsFragment : BaseFragment<ChatsViewModel>(R.layout.fragment_chats),
         super.onPause()
         ApplicationContext.getInstance(requireContext()).messageNotifier.setHomeScreenVisible(false)
 
-        homeViewModel.getObservable(requireContext()).removeObservers(this)
+        viewModel.getObservable(requireContext()).removeObservers(this)
     }
 
     override fun onDestroy() {
@@ -401,7 +400,7 @@ class ChatsFragment : BaseFragment<ChatsViewModel>(R.layout.fragment_chats),
 
     // region Updating
     private fun startObservingUpdates() {
-        homeViewModel.getObservable(requireContext()).observe(requireActivity()) { newData ->
+        viewModel.getObservable(requireContext()).observe(requireActivity()) { newData ->
             val manager = binding.recyclerView.layoutManager as LinearLayoutManager
             val firstPos = manager.findFirstCompletelyVisibleItemPosition()
             val offsetTop = if (firstPos >= 0) {
@@ -434,7 +433,7 @@ class ChatsFragment : BaseFragment<ChatsViewModel>(R.layout.fragment_chats),
         if (event.recipient.isLocalNumber) {
             //updateProfileButton()
         } else {
-            homeViewModel.tryUpdateChannel()
+            viewModel.tryUpdateChannel()
         }
     }
 
@@ -583,7 +582,7 @@ class ChatsFragment : BaseFragment<ChatsViewModel>(R.layout.fragment_chats),
     private fun setConversationPinned(threadId: Long, pinned: Boolean) {
         lifecycleScope.launch(Dispatchers.IO) {
             threadDb.setPinned(threadId, pinned)
-            homeViewModel.tryUpdateChannel()
+            viewModel.tryUpdateChannel()
         }
     }
 
@@ -674,7 +673,7 @@ class ChatsFragment : BaseFragment<ChatsViewModel>(R.layout.fragment_chats),
             .setPositiveButton(R.string.yes) { _, _ ->
                 textSecurePreferences.setHasHiddenMessageRequests()
                 setupMessageRequestsBanner()
-                homeViewModel.tryUpdateChannel()
+                viewModel.tryUpdateChannel()
             }
             .setNegativeButton(R.string.no) { _, _ ->
                 // Do nothing

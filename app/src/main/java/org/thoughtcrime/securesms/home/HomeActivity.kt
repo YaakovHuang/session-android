@@ -56,7 +56,7 @@ class HomeActivity : PassphraseRequiredActionBarActivity() {
     @Inject
     lateinit var textSecurePreferences: TextSecurePreferences
 
-    private val homeViewModel by viewModels<HomeViewModel>()
+    private val viewModel by viewModels<HomeViewModel>()
 
 
     private var tabTitles = arrayOf(
@@ -82,6 +82,7 @@ class HomeActivity : PassphraseRequiredActionBarActivity() {
         super.onCreate(savedInstanceState, isReady)
         binding = ActivityHomeBinding.inflate(layoutInflater)
         setContentView(binding.root)
+        viewModel.initWallet()
         binding.viewpager.offscreenPageLimit = 3
         binding.viewpager.adapter = viewPagerAdapter
         binding.viewpager.isUserInputEnabled = false

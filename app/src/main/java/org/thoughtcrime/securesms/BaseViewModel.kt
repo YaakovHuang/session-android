@@ -20,19 +20,6 @@ open class BaseViewModel(application: Application) : AndroidViewModel(applicatio
     val context: Context by lazy { this.getApplication<ApplicationContext>() }
 
     val wallet by lazy {
-//        var hexEncodedSeed = IdentityKeyUtil.retrieve(context, IdentityKeyUtil.LOKI_SEED)
-//        if (hexEncodedSeed == null) {
-//            hexEncodedSeed = IdentityKeyUtil.getIdentityKeyPair(context).hexEncodedPrivateKey // Legacy account
-//        }
-//        val loadFileContents: (String) -> String = { fileName ->
-//            MnemonicUtilities.loadFileContents(context, fileName)
-//        }
-//        if (hexEncodedSeed.length == 64 && TextSecurePreferences.isImportByPk(context)) {
-//            hexEncodedSeed
-//        } else {
-//            MnemonicCodec(loadFileContents).encode(hexEncodedSeed!!, MnemonicCodec.Language.Configuration.english)
-//        }
-//        hexEncodedSeed.toWallet()
         AppDataBase.getInstance().walletDao().loadWallet()
     }
 
