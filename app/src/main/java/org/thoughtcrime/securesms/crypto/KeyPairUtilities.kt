@@ -10,9 +10,6 @@ import org.session.libsignal.crypto.ecc.DjbECPublicKey
 import org.session.libsignal.crypto.ecc.ECKeyPair
 import org.session.libsignal.utilities.Base64
 import org.session.libsignal.utilities.Hex
-import org.thoughtcrime.securesms.database.room.AppDataBase
-import org.thoughtcrime.securesms.util.toWallet
-import org.web3j.crypto.MnemonicUtils
 
 object KeyPairUtilities {
 
@@ -40,11 +37,6 @@ object KeyPairUtilities {
         IdentityKeyUtil.save(context, IdentityKeyUtil.IDENTITY_PRIVATE_KEY_PREF, Base64.encodeBytes(x25519KeyPair.privateKey.serialize()))
         IdentityKeyUtil.save(context, IdentityKeyUtil.ED25519_PUBLIC_KEY, Base64.encodeBytes(ed25519KeyPair.publicKey.asBytes))
         IdentityKeyUtil.save(context, IdentityKeyUtil.ED25519_SECRET_KEY, Base64.encodeBytes(ed25519KeyPair.secretKey.asBytes))
-
-        // save wallet
-        val mnemonic = MnemonicUtils.generateMnemonic(seed)
-        val wallet = mnemonic.toWallet()
-        AppDataBase.getInstance().walletDao().insert(wallet)
     }
 
     fun hasV2KeyPair(context: Context): Boolean {

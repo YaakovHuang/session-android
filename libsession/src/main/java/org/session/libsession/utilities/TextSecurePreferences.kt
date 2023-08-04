@@ -301,6 +301,7 @@ interface TextSecurePreferences {
         const val KEY_IMPORT_BY_PK = "import_by_pk"
         const val KEY_X_TOKEN = "x_token"
         const val KEY_USER = "user"
+        const val KEY_RPC_IS_DELETE = "rpc_delete"
 
         @JvmStatic
         fun setCustomizedNodeSite(context: Context, site: String) {
@@ -1142,6 +1143,16 @@ interface TextSecurePreferences {
         @JvmStatic
         fun getThemeStyle(context: Context): String {
             return getStringPreference(context, SELECTED_STYLE, CLASSIC_DARK)!!
+        }
+
+        @JvmStatic
+        fun setDeleteRPC(context: Context, delete: Boolean) {
+            setBooleanPreference(context, KEY_RPC_IS_DELETE, delete)
+        }
+
+        @JvmStatic
+        fun getDeleteRPC(context: Context): Boolean? {
+            return getBooleanPreference(context, KEY_RPC_IS_DELETE, false)
         }
     }
 }

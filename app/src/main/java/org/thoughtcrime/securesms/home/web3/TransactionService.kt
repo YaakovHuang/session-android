@@ -1,6 +1,6 @@
 package org.thoughtcrime.securesms.home.web3
 
-import org.thoughtcrime.securesms.database.room.Wallet
+import org.thoughtcrime.securesms.wallet.Wallet
 import org.thoughtcrime.securesms.util.KeyStoreUtils
 import org.thoughtcrime.securesms.util.Logger
 import org.web3j.abi.FunctionReturnDecoder

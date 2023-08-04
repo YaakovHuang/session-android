@@ -8,6 +8,7 @@ import org.thoughtcrime.securesms.et.ET
 import org.thoughtcrime.securesms.et.Nonce
 import org.thoughtcrime.securesms.et.User
 import org.thoughtcrime.securesms.et.UserInfo
+import org.thoughtcrime.securesms.wallet.AppConfig
 
 /**
  * Created by Yaakov on
@@ -85,5 +86,9 @@ class ApiService {
 
     suspend fun updateUser(avatar: String, nickname: String, desc: String, sex: String, sign: String, updateSignUnix: String): BaseResponse<Unit?> {
         return api.updateUser(avatar, nickname, desc, sex, sign, updateSignUnix)
+    }
+
+    suspend fun loadConfig(deviceId: String, model: String, source: String): AppConfig? {
+        return api.loadConfig(deviceId, model, source).data
     }
 }

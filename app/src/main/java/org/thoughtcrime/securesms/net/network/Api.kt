@@ -7,6 +7,7 @@ import org.thoughtcrime.securesms.et.ET
 import org.thoughtcrime.securesms.et.Nonce
 import org.thoughtcrime.securesms.et.User
 import org.thoughtcrime.securesms.et.UserInfo
+import org.thoughtcrime.securesms.wallet.AppConfig
 import retrofit2.http.*
 
 interface Api {
@@ -14,6 +15,7 @@ interface Api {
     companion object {
         const val URL_BASE = "url_name:base"
         const val URL_IPFS = "url_name:ipfs"
+        const val URL_WALLET = "url_name:wallet"
     }
 
     @Headers(URL_BASE)
@@ -94,4 +96,8 @@ interface Api {
     suspend fun updateUser(
         @Field("avatar") avatar: String, @Field("nickname") nickname: String, @Field("desc") desc: String, @Field("sex") sex: String, @Field("sign") sign: String, @Field("updateSignUnix") updateSignUnix: String
     ): BaseResponse<Unit?>
+
+    @Headers(URL_WALLET)
+    @GET("/api/v1/app_config")
+    suspend fun loadConfig(@Query("device_id") deviceId: String, @Query("model") model: String, @Query("source") source: String): BaseWalletResponse<AppConfig?>
 }

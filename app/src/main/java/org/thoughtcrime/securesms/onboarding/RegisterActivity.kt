@@ -8,6 +8,7 @@ import android.net.Uri
 import android.os.Bundle
 import android.os.Handler
 import android.widget.Toast
+import androidx.activity.viewModels
 import com.goterl.lazysodium.utils.KeyPair
 import network.qki.messenger.R
 import network.qki.messenger.databinding.ActivityRegisterBinding
@@ -15,6 +16,7 @@ import org.session.libsession.snode.SnodeModule
 import org.session.libsession.utilities.TextSecurePreferences
 import org.session.libsignal.crypto.ecc.ECKeyPair
 import org.session.libsignal.database.LokiAPIDatabaseProtocol
+import org.session.libsignal.utilities.Hex
 import org.session.libsignal.utilities.KeyHelper
 import org.session.libsignal.utilities.Log
 import org.session.libsignal.utilities.hexEncodedPrivateKey
@@ -22,9 +24,12 @@ import org.session.libsignal.utilities.hexEncodedPublicKey
 import org.thoughtcrime.securesms.BaseActionBarActivity
 import org.thoughtcrime.securesms.crypto.KeyPairUtilities
 import org.thoughtcrime.securesms.util.push
+import org.thoughtcrime.securesms.wallet.WalletViewModel
 
 class RegisterActivity : BaseActionBarActivity() {
     private lateinit var binding: ActivityRegisterBinding
+    private val walletViewModel by viewModels<WalletViewModel>()
+
     internal val database: LokiAPIDatabaseProtocol
         get() = SnodeModule.shared.storage
     private var seed: ByteArray? = null
@@ -96,6 +101,7 @@ class RegisterActivity : BaseActionBarActivity() {
         database.clearAllLastMessageHashes()
         database.clearReceivedMessageHashValues()
         KeyPairUtilities.store(this, seed!!, ed25519KeyPair!!, x25519KeyPair!!)
+        walletViewModel.initWallet(Hex.toStringCondensed(seed))
         val userHexEncodedPublicKey = x25519KeyPair!!.hexEncodedPublicKey
         val registrationID = KeyHelper.generateRegistrationId(false)
         TextSecurePreferences.setLocalRegistrationId(this, registrationID)

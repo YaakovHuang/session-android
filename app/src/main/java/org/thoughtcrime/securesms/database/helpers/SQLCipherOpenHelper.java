@@ -4,6 +4,7 @@ import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.content.Context;
 import android.database.Cursor;
+import android.database.sqlite.SQLiteException;
 
 import androidx.annotation.NonNull;
 import androidx.core.app.NotificationCompat;
@@ -11,7 +12,6 @@ import androidx.core.app.NotificationCompat;
 import net.zetetic.database.sqlcipher.SQLiteConnection;
 import net.zetetic.database.sqlcipher.SQLiteDatabase;
 import net.zetetic.database.sqlcipher.SQLiteDatabaseHook;
-import net.zetetic.database.sqlcipher.SQLiteException;
 import net.zetetic.database.sqlcipher.SQLiteOpenHelper;
 
 import org.session.libsession.utilities.TextSecurePreferences;

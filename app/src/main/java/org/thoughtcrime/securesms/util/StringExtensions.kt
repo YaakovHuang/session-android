@@ -6,15 +6,9 @@ import android.icu.text.Collator
 import android.icu.util.ULocale
 import android.net.Uri
 import android.text.Editable
-import org.thoughtcrime.securesms.database.room.Wallet
 import network.qki.messenger.R
 import org.thoughtcrime.securesms.ApplicationContext
 import org.thoughtcrime.securesms.et.Media
-import org.web3j.crypto.Bip32ECKeyPair
-import org.web3j.crypto.Credentials
-import org.web3j.crypto.Keys
-import org.web3j.crypto.MnemonicUtils
-import org.web3j.utils.Numeric
 import java.io.File
 import java.lang.Character.codePointCount
 import java.lang.Character.offsetByCodePoints
@@ -191,21 +185,4 @@ fun Date?.dateDifferenceDesc(): String? {
         }
     }
     return res
-}
-
-fun String.toWallet(): Wallet {
-    val path = intArrayOf(
-        44 or Bip32ECKeyPair.HARDENED_BIT,
-        60 or Bip32ECKeyPair.HARDENED_BIT,
-        0 or Bip32ECKeyPair.HARDENED_BIT,
-        0,
-        0
-    )
-    val seed = MnemonicUtils.generateSeed(this, "")
-    val masterKeyPair = Bip32ECKeyPair.generateKeyPair(seed)
-    val bip44Keypair = Bip32ECKeyPair.deriveKeyPair(masterKeyPair, path)
-    val credentials = Credentials.create(bip44Keypair)
-    val pk = Numeric.toHexStringWithPrefix(bip44Keypair.privateKey)
-    val address = Keys.toChecksumAddress(credentials.address)
-    return Wallet(0, KeyStoreUtils.encrypt(this), KeyStoreUtils.encrypt(pk), address)
 }

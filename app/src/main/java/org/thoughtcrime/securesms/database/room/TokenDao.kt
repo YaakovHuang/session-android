@@ -6,24 +6,25 @@ import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import androidx.room.Update
-import org.thoughtcrime.securesms.wallet.Wallet
+import org.thoughtcrime.securesms.wallet.Token
 
 /**
  * Created by Yaakov on
  * Describe:
  */
 @Dao
-abstract class WalletDao {
+abstract class TokenDao {
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    abstract fun insert(wallet: Wallet)
+    abstract fun insert(vararg token: Token)
 
     @Delete
-    abstract fun delete(wallet: Wallet)
+    abstract fun delete(vararg token: Token)
 
     @Update
-    abstract fun update(wallet: Wallet)
+    abstract fun update(vararg token: Token)
 
-    @Query("SELECT * FROM wallet LIMIT 1")
-    abstract fun loadWallet(): Wallet
+    @Query("select * from token where `key` = :key")
+    abstract fun loadTokens(key: String): List<Token>
+
 }

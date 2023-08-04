@@ -34,6 +34,7 @@ import org.thoughtcrime.securesms.database.ThreadDatabase
 import org.thoughtcrime.securesms.home.web3.DAppWebActivity
 import org.thoughtcrime.securesms.util.StatusBarUtil
 import org.thoughtcrime.securesms.util.toastOnUi
+import org.thoughtcrime.securesms.wallet.WalletViewModel
 import java.io.IOException
 import java.util.concurrent.TimeUnit
 import javax.inject.Inject
@@ -59,6 +60,7 @@ class HomeActivity : PassphraseRequiredActionBarActivity() {
     lateinit var textSecurePreferences: TextSecurePreferences
 
     private val viewModel by viewModels<HomeViewModel>()
+    private val walletViewModel by viewModels<WalletViewModel>()
 
 
     private var tabTitles = arrayOf(
@@ -90,6 +92,7 @@ class HomeActivity : PassphraseRequiredActionBarActivity() {
         binding.viewpager.isUserInputEnabled = false
         intTabLayout()
         checkUpdate()
+        loadConfig()
     }
 
     override fun onBackPressed() {
@@ -169,26 +172,15 @@ class HomeActivity : PassphraseRequiredActionBarActivity() {
         manager?.download()
     }
 
+    private fun loadConfig() {
+        walletViewModel.loadConfig()
+    }
+
     private fun intTabLayout() {
         binding.viewpager.adapter = viewPagerAdapter
         TabLayoutMediator(binding.tabLayout, binding.viewpager, false, false) { tab, position ->
             tab.text = getString(tabTitles[position])
         }.attach()
-//        binding.viewpager.registerOnPageChangeCallback(object : ViewPager2.OnPageChangeCallback() {
-//
-//            override fun onPageSelected(position: Int) {
-//                super.onPageSelected(position)
-//                when (position) {
-//                    1 -> {
-//                        val intent = Intent(this@HomeActivity, DAppWebActivity::class.java)
-//                        startActivityForResult(intent, DAppWebActivity.FINISH)
-//                    }
-//
-//                    else -> {}
-//                }
-//            }
-//
-//        })
         binding.tabLayout.addOnTabSelectedListener(object : TabLayout.OnTabSelectedListener {
             // 页面被选中
             override fun onTabSelected(tab: TabLayout.Tab) {

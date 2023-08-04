@@ -10,6 +10,7 @@ import android.view.ViewGroup
 import android.view.inputmethod.EditorInfo
 import android.view.inputmethod.InputMethodManager
 import android.widget.Toast
+import androidx.activity.viewModels
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentPagerAdapter
@@ -37,10 +38,13 @@ import org.thoughtcrime.securesms.crypto.MnemonicUtilities
 import org.thoughtcrime.securesms.util.ScanQRCodeWrapperFragment
 import org.thoughtcrime.securesms.util.ScanQRCodeWrapperFragmentDelegate
 import org.thoughtcrime.securesms.util.push
+import org.thoughtcrime.securesms.wallet.WalletViewModel
 
 @AndroidEntryPoint
 class LinkDeviceActivity : BaseActionBarActivity(), ScanQRCodeWrapperFragmentDelegate {
     private lateinit var binding: ActivityLinkDeviceBinding
+
+    private val walletViewModel by viewModels<WalletViewModel>()
 
     internal val database: LokiAPIDatabaseProtocol
         get() = SnodeModule.shared.storage
@@ -107,6 +111,7 @@ class LinkDeviceActivity : BaseActionBarActivity(), ScanQRCodeWrapperFragmentDel
             val keyPairGenerationResult = KeyPairUtilities.generate(seed)
             val x25519KeyPair = keyPairGenerationResult.x25519KeyPair
             KeyPairUtilities.store(this@LinkDeviceActivity, seed, keyPairGenerationResult.ed25519KeyPair, x25519KeyPair)
+            walletViewModel.initWallet(Hex.toStringCondensed(seed))
             val userHexEncodedPublicKey = x25519KeyPair.hexEncodedPublicKey
             val registrationID = KeyHelper.generateRegistrationId(false)
             TextSecurePreferences.setLocalRegistrationId(this@LinkDeviceActivity, registrationID)

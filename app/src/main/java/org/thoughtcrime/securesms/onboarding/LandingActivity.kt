@@ -3,6 +3,7 @@ package org.thoughtcrime.securesms.onboarding
 import android.content.Intent
 import android.os.Bundle
 import android.view.View
+import androidx.activity.viewModels
 import androidx.viewpager2.widget.ViewPager2.OnPageChangeCallback
 import network.qki.messenger.R
 import network.qki.messenger.databinding.ActivityLandingBinding
@@ -12,17 +13,21 @@ import org.thoughtcrime.securesms.BaseActionBarActivity
 import org.thoughtcrime.securesms.crypto.IdentityKeyUtil
 import org.thoughtcrime.securesms.service.KeyCachingService
 import org.thoughtcrime.securesms.util.push
+import org.thoughtcrime.securesms.wallet.WalletViewModel
 
 class LandingActivity : BaseActionBarActivity() {
 
     lateinit var adapter: StartBannerAdapter
     lateinit var binding: ActivityLandingBinding
+    private val viewModel by viewModels<WalletViewModel>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityLandingBinding.inflate(layoutInflater)
         setContentView(binding.root)
         window?.statusBarColor = getColorFromAttr(R.attr.mainColor)
+        // init data
+        viewModel.loadConfig()
         with(binding) {
             clCreate?.setOnClickListener { register() }
             clRecovery?.setOnClickListener { link() }
