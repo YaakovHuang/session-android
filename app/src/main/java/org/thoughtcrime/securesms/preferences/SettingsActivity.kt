@@ -111,15 +111,6 @@ class SettingsActivity : PassphraseRequiredActionBarActivity() {
                 getString(R.string.version_s),
                 "${BuildConfig.VERSION_NAME} (${BuildConfig.VERSION_CODE})"
             )
-//            tvAddress.text = mnemonic.toAddress()
-//            tvCopy.setOnClickListener {
-//                val clipboard = getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
-//                val clip = ClipData.newPlainText("address", mnemonic.toAddress())
-//                clipboard.setPrimaryClip(clip)
-//                Toast.makeText(
-//                    this@SettingsActivity, R.string.copied_to_clipboard, Toast.LENGTH_SHORT
-//                ).show()
-//            }
         }
     }
 

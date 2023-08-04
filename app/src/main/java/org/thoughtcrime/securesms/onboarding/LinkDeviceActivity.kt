@@ -79,11 +79,9 @@ class LinkDeviceActivity : BaseActionBarActivity(), ScanQRCodeWrapperFragmentDel
             MnemonicUtilities.loadFileContents(this, fileName)
         }
         try {
-            val words = mnemonic.split(" ").toMutableList()
-            var isPk = words.size == 1 && mnemonic.length == 64
             val hexEncodedSeed = MnemonicCodec(loadFileContents).decode(mnemonic)
             val seed = Hex.fromStringCondensed(hexEncodedSeed)
-            continueWithSeed(seed, isPk)
+            continueWithSeed(seed)
         } catch (error: Exception) {
             val message = if (error is MnemonicCodec.DecodingError) {
                 error.description
@@ -94,7 +92,7 @@ class LinkDeviceActivity : BaseActionBarActivity(), ScanQRCodeWrapperFragmentDel
         }
     }
 
-    private fun continueWithSeed(seed: ByteArray, isPk: Boolean) {
+    private fun continueWithSeed(seed: ByteArray) {
 
         // only have one sync job running at a time (prevent QR from trying to spawn a new job)
         if (restoreJob?.isActive == true) return
@@ -108,14 +106,13 @@ class LinkDeviceActivity : BaseActionBarActivity(), ScanQRCodeWrapperFragmentDel
             // RestoreActivity handles seed this way
             val keyPairGenerationResult = KeyPairUtilities.generate(seed)
             val x25519KeyPair = keyPairGenerationResult.x25519KeyPair
-            KeyPairUtilities.store(this@LinkDeviceActivity, seed, keyPairGenerationResult.ed25519KeyPair, x25519KeyPair, isPk)
+            KeyPairUtilities.store(this@LinkDeviceActivity, seed, keyPairGenerationResult.ed25519KeyPair, x25519KeyPair)
             val userHexEncodedPublicKey = x25519KeyPair.hexEncodedPublicKey
             val registrationID = KeyHelper.generateRegistrationId(false)
             TextSecurePreferences.setLocalRegistrationId(this@LinkDeviceActivity, registrationID)
             TextSecurePreferences.setLocalNumber(this@LinkDeviceActivity, userHexEncodedPublicKey)
             TextSecurePreferences.setRestorationTime(this@LinkDeviceActivity, System.currentTimeMillis())
             TextSecurePreferences.setHasViewedSeed(this@LinkDeviceActivity, true)
-            TextSecurePreferences.setImportByPk(this@LinkDeviceActivity, isPk)
             binding.loader.isVisible = true
             val snackBar = Snackbar.make(binding.containerLayout, R.string.activity_link_device_skip_prompt, Snackbar.LENGTH_INDEFINITE)
                 .setAction(R.string.registration_activity__skip) { register(true) }

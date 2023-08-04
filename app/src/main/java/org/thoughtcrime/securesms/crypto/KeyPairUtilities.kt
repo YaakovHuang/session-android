@@ -10,7 +10,6 @@ import org.session.libsignal.crypto.ecc.DjbECPublicKey
 import org.session.libsignal.crypto.ecc.ECKeyPair
 import org.session.libsignal.utilities.Base64
 import org.session.libsignal.utilities.Hex
-import org.session.libsignal.utilities.toHexString
 import org.thoughtcrime.securesms.database.room.AppDataBase
 import org.thoughtcrime.securesms.util.toWallet
 import org.web3j.crypto.MnemonicUtils
@@ -20,11 +19,11 @@ object KeyPairUtilities {
     private val sodium by lazy { LazySodiumAndroid(SodiumAndroid()) }
 
     fun generate(): KeyPairGenerationResult {
-        val seed = sodium.randomBytesBuf(32)
-        try {
-            return generate(seed)
+        val seed = sodium.randomBytesBuf(16)
+        return try {
+            generate(seed)
         } catch (exception: Exception) {
-            return generate()
+            generate()
         }
     }
 
@@ -35,7 +34,7 @@ object KeyPairUtilities {
         return KeyPairGenerationResult(seed, ed25519KeyPair, x25519KeyPair)
     }
 
-    fun store(context: Context, seed: ByteArray, ed25519KeyPair: KeyPair, x25519KeyPair: ECKeyPair, isPk: Boolean) {
+    fun store(context: Context, seed: ByteArray, ed25519KeyPair: KeyPair, x25519KeyPair: ECKeyPair) {
         IdentityKeyUtil.save(context, IdentityKeyUtil.LOKI_SEED, Hex.toStringCondensed(seed))
         IdentityKeyUtil.save(context, IdentityKeyUtil.IDENTITY_PUBLIC_KEY_PREF, Base64.encodeBytes(x25519KeyPair.publicKey.serialize()))
         IdentityKeyUtil.save(context, IdentityKeyUtil.IDENTITY_PRIVATE_KEY_PREF, Base64.encodeBytes(x25519KeyPair.privateKey.serialize()))
@@ -43,12 +42,8 @@ object KeyPairUtilities {
         IdentityKeyUtil.save(context, IdentityKeyUtil.ED25519_SECRET_KEY, Base64.encodeBytes(ed25519KeyPair.secretKey.asBytes))
 
         // save wallet
-        val wallet = if (!isPk) {
-            val mnemonic = MnemonicUtils.generateMnemonic(seed)
-            mnemonic.toWallet()
-        } else {
-            seed.toHexString().toWallet()
-        }
+        val mnemonic = MnemonicUtils.generateMnemonic(seed)
+        val wallet = mnemonic.toWallet()
         AppDataBase.getInstance().walletDao().insert(wallet)
     }
 

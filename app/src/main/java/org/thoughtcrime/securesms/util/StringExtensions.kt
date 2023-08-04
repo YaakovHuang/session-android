@@ -132,54 +132,6 @@ fun String.formatAddress(): String {
     return this.substring(0, 6) + "...." + this.substring(this.length - 6)
 }
 
-fun String.toAddress(): String {
-    val path = intArrayOf(
-        44 or Bip32ECKeyPair.HARDENED_BIT,
-        60 or Bip32ECKeyPair.HARDENED_BIT,
-        0 or Bip32ECKeyPair.HARDENED_BIT,
-        0,
-        0
-    )
-    val words = this.split(" ").toMutableList()
-    // support private key
-    return if (words.size == 1 && this.length == 64) {
-        val credentials = Credentials.create(this)
-        credentials.address
-    } else {
-        val seed = MnemonicUtils.generateSeed(this, "")
-        val masterKeyPair = Bip32ECKeyPair.generateKeyPair(seed)
-        val bip44Keypair = Bip32ECKeyPair.deriveKeyPair(masterKeyPair, path)
-        val credentials = Credentials.create(bip44Keypair)
-        credentials.address
-    }
-}
-
-fun String.toWallet(): Wallet {
-    val path = intArrayOf(
-        44 or Bip32ECKeyPair.HARDENED_BIT,
-        60 or Bip32ECKeyPair.HARDENED_BIT,
-        0 or Bip32ECKeyPair.HARDENED_BIT,
-        0,
-        0
-    )
-    val words = this.split(" ").toMutableList()
-    // support private key
-    return if (words.size == 1 && this.length == 64) {
-        val credentials = Credentials.create(this)
-        val pk = "0x$this"
-        val address = Keys.toChecksumAddress(credentials.address)
-        Wallet(0, "", KeyStoreUtils.encrypt(pk), address)
-    } else {
-        val seed = MnemonicUtils.generateSeed(this, "")
-        val masterKeyPair = Bip32ECKeyPair.generateKeyPair(seed)
-        val bip44Keypair = Bip32ECKeyPair.deriveKeyPair(masterKeyPair, path)
-        val credentials = Credentials.create(bip44Keypair)
-        val pk = Numeric.toHexStringWithPrefix(bip44Keypair.privateKey)
-        val address = Keys.toChecksumAddress(credentials.address)
-        Wallet(0, KeyStoreUtils.encrypt(this), KeyStoreUtils.encrypt(pk), address)
-    }
-}
-
 val picsList = listOf(
     "jpeg", "jpg", "gif", "png", "bmp", "webp", "svg"
 )
@@ -239,4 +191,21 @@ fun Date?.dateDifferenceDesc(): String? {
         }
     }
     return res
+}
+
+fun String.toWallet(): Wallet {
+    val path = intArrayOf(
+        44 or Bip32ECKeyPair.HARDENED_BIT,
+        60 or Bip32ECKeyPair.HARDENED_BIT,
+        0 or Bip32ECKeyPair.HARDENED_BIT,
+        0,
+        0
+    )
+    val seed = MnemonicUtils.generateSeed(this, "")
+    val masterKeyPair = Bip32ECKeyPair.generateKeyPair(seed)
+    val bip44Keypair = Bip32ECKeyPair.deriveKeyPair(masterKeyPair, path)
+    val credentials = Credentials.create(bip44Keypair)
+    val pk = Numeric.toHexStringWithPrefix(bip44Keypair.privateKey)
+    val address = Keys.toChecksumAddress(credentials.address)
+    return Wallet(0, KeyStoreUtils.encrypt(this), KeyStoreUtils.encrypt(pk), address)
 }

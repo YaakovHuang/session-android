@@ -81,7 +81,7 @@ class RecoveryPhraseRestoreActivity : BaseActionBarActivity() {
             val seed = Hex.fromStringCondensed(hexEncodedSeed)
             val keyPairGenerationResult = KeyPairUtilities.generate(seed)
             val x25519KeyPair = keyPairGenerationResult.x25519KeyPair
-            KeyPairUtilities.store(this, seed, keyPairGenerationResult.ed25519KeyPair, x25519KeyPair, false)
+            KeyPairUtilities.store(this, seed, keyPairGenerationResult.ed25519KeyPair, x25519KeyPair)
             val userHexEncodedPublicKey = x25519KeyPair.hexEncodedPublicKey
             val registrationID = KeyHelper.generateRegistrationId(false)
             TextSecurePreferences.setLocalRegistrationId(this, registrationID)

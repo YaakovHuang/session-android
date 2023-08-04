@@ -27,7 +27,6 @@ class WebAppInterface(
         when (method) {
             DAppMethod.REQUESTACCOUNTS -> {
                 webView?.post {
-                    Logger.d("address = ${wallet.address}")
                     viewModel.setAddress(webView, wallet.address)
                     viewModel.sendAddress(webView, id, wallet.address)
                 }
