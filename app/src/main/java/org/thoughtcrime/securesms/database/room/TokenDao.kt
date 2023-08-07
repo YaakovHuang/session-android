@@ -27,4 +27,7 @@ abstract class TokenDao {
     @Query("select * from token where `key` = :key")
     abstract fun loadTokens(key: String): List<Token>
 
+    @Query("select * from token where `chain_id` = :chainId")
+    abstract fun loadTokens(chainId: Int): List<Token>
+
 }

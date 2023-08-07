@@ -27,4 +27,10 @@ abstract class AccountDao {
     @Query("select * from account")
     abstract fun loadAll(): List<Account>
 
+    @Query("select * from account where `isSelect` = 1 limit 1")
+    abstract fun loadSelectAccount(): Account
+
+    @Query("select * from account where `chain_id` = :chainId limit 1")
+    abstract fun loadAccount(chainId: Int): Account
+
 }

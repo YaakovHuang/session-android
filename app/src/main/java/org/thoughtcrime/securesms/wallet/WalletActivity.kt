@@ -20,12 +20,10 @@ class WalletActivity : PassphraseRequiredActionBarActivity() {
         binding = ActivityWalletBinding.inflate(layoutInflater)
         setContentView(binding.root)
         StatusBarUtil.setStatusColor(this, true, false, R.color.core_white)
-        initView()
-
     }
 
-
-    private fun initView() {
+    override fun initViews() {
+        super.initViews()
         setSupportActionBar(binding.toolbar)
         val actionBar = supportActionBar ?: return
         actionBar.setDisplayHomeAsUpEnabled(true)
@@ -33,7 +31,10 @@ class WalletActivity : PassphraseRequiredActionBarActivity() {
         with(binding) {
 
         }
+    }
 
+    override fun initData() {
+        super.initData()
     }
 
 

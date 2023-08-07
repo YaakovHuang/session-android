@@ -48,14 +48,14 @@
                 android:layout_marginEnd="6dp"
                 android:maxLines="1"
                 android:text="BNB Chain"
-                android:textColor="?attr/reverseMainColor"
+                android:textColor="@color/core_white"
                 android:textSize="12sp" />
 
             <ImageView
                 android:layout_width="6dp"
                 android:layout_height="6dp"
                 android:src="@drawable/ic_arrow_down"
-                app:tint="?attr/reverseMainColor" />
+                app:tint="@color/core_white" />
 
         </LinearLayout>
 
