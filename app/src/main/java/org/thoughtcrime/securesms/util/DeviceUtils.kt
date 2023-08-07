@@ -9,7 +9,8 @@ import java.util.Locale
 import java.util.UUID
 
 /**
- * Created by siru-6 on 2020/6/10
+ * Created by Yaakov on
+ * Describe:
  */
 object DeviceUtils {
     /**
