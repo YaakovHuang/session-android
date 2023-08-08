@@ -14,13 +14,13 @@ import org.session.libsession.utilities.TextSecurePreferences
 import org.thoughtcrime.securesms.BaseFragment
 import org.thoughtcrime.securesms.et.ETEditUserActivity
 import org.thoughtcrime.securesms.et.ETFollowActivity
-import org.thoughtcrime.securesms.et.User
 import org.thoughtcrime.securesms.et.ETUserCenterActivity
 import org.thoughtcrime.securesms.et.ETViewModel
+import org.thoughtcrime.securesms.et.User
 import org.thoughtcrime.securesms.et.UserUpdateEvent
 import org.thoughtcrime.securesms.util.GlideHelper
-import org.thoughtcrime.securesms.util.KeyStoreUtils
-import org.thoughtcrime.securesms.util.Logger
+import org.thoughtcrime.securesms.util.formatAddress
+import org.thoughtcrime.securesms.util.sendToClip
 import org.thoughtcrime.securesms.util.viewbindingdelegate.viewBinding
 import org.thoughtcrime.securesms.wallet.WalletActivity
 
@@ -45,9 +45,6 @@ class MeFragment : BaseFragment<ETViewModel>(R.layout.fragment_me) {
         initView()
         initObserver()
         initData()
-        Logger.d("mn = ${KeyStoreUtils.decrypt(viewModel.wallet.mnemonic)}")
-        Logger.d("pk = ${KeyStoreUtils.decrypt(viewModel.wallet.pk)}")
-        Logger.d("address = ${viewModel.wallet.address}")
     }
 
     override fun onDestroy() {
@@ -115,6 +112,9 @@ class MeFragment : BaseFragment<ETViewModel>(R.layout.fragment_me) {
                 val intent = Intent(context, AboutActivity::class.java)
                 show(intent)
             }
+            ivCopy.setOnClickListener {
+                requireContext().sendToClip(viewModel.wallet.address)
+            }
         }
     }
 
@@ -155,6 +155,7 @@ class MeFragment : BaseFragment<ETViewModel>(R.layout.fragment_me) {
             tvFollowNum.text = "${user.FollowCount}"
             tvFollowerNum.text = "${user.FansCount}"
             tvMoments.text = "${user.TwCount}"
+            tvAddress.text = "${viewModel.wallet.address.formatAddress()}"
         }
     }
 

@@ -17,9 +17,10 @@ import org.thoughtcrime.securesms.wallet.Wallet
  */
 @Database(
     entities = [Wallet::class, Chain::class, Rpc::class, Account::class, Token::class],
-    version = 2,
+    version = 3,
     autoMigrations = [
-        AutoMigration(from = 1, to = 2)
+        AutoMigration(from = 1, to = 2),
+        AutoMigration(from = 2, to = 3)
     ]
 )
 abstract class AppDataBase : RoomDatabase() {

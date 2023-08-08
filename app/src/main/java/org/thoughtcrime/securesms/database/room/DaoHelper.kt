@@ -14,12 +14,17 @@ object DaoHelper {
         return AppDataBase.getInstance().walletDao().loadWallet()
     }
 
+    fun deleteWallet(wallet: Wallet) {
+        AppDataBase.getInstance().walletDao().delete(wallet)
+    }
+
     fun loadSelectAccount(): Account {
         return AppDataBase.getInstance().accountDao().loadSelectAccount()
     }
 
-    fun loadTokens(chainId: Int): List<Token> {
-        return AppDataBase.getInstance().tokenDao().loadTokens(chainId)
+    fun loadTokens(): List<Token> {
+        var account = AppDataBase.getInstance().accountDao().loadSelectAccount()
+        return AppDataBase.getInstance().tokenDao().loadTokens(account.chain_id!!)
     }
 
 

@@ -1,8 +1,8 @@
 {
   "formatVersion": 1,
   "database": {
-    "version": 2,
-    "identityHash": "3ea88df4189882739390adb31250f52e",
+    "version": 3,
+    "identityHash": "1a7c15951073914f2291c510a4afc23d",
     "entities": [
       {
         "tableName": "Wallet",
@@ -216,7 +216,7 @@
       },
       {
         "tableName": "Account",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `key` TEXT, `chain_id` INTEGER, `address` TEXT NOT NULL, `pk` TEXT, `isSelect` INTEGER NOT NULL, `sort` INTEGER NOT NULL, `value` TEXT NOT NULL)",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `key` TEXT, `chain_id` INTEGER, `address` TEXT, `pk` TEXT, `isSelect` INTEGER NOT NULL, `sort` INTEGER NOT NULL, `value` TEXT NOT NULL)",
         "fields": [
           {
             "fieldPath": "id",
@@ -240,7 +240,7 @@
             "fieldPath": "address",
             "columnName": "address",
             "affinity": "TEXT",
-            "notNull": true
+            "notNull": false
           },
           {
             "fieldPath": "pk",
@@ -372,7 +372,7 @@
     "views": [],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
-      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '3ea88df4189882739390adb31250f52e')"
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '1a7c15951073914f2291c510a4afc23d')"
     ]
   }
 }

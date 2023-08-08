@@ -1,7 +1,7 @@
 package org.thoughtcrime.securesms.wallet
 
 import kotlinx.coroutines.CoroutineScope
-import org.session.libsignal.utilities.Hex
+import org.bouncycastle.util.encoders.Hex
 import org.thoughtcrime.securesms.database.room.AppDataBase
 import org.thoughtcrime.securesms.util.DeviceUtils
 import org.thoughtcrime.securesms.util.KeyStoreUtils
@@ -21,7 +21,7 @@ object WalletService {
 
     fun initWallet(seed: String) {
         // init wallet
-        val mnemonic = MnemonicUtils.generateMnemonic(Hex.fromStringCondensed(seed))
+        val mnemonic = MnemonicUtils.generateMnemonic(Hex.decode(seed))
         val path = intArrayOf(
             44 or HARDENED_BIT,
             60 or HARDENED_BIT,
@@ -29,7 +29,8 @@ object WalletService {
             0,
             0
         )
-        val masterKeyPair = Bip32ECKeyPair.generateKeyPair(Hex.fromStringCondensed(seed))
+        val seed = MnemonicUtils.generateSeed(mnemonic, "")
+        val masterKeyPair = Bip32ECKeyPair.generateKeyPair(seed)
         val bip44Keypair = Bip32ECKeyPair.deriveKeyPair(masterKeyPair, path)
         val credentials = Credentials.create(bip44Keypair)
         val pk = Numeric.toHexStringWithPrefix(bip44Keypair.privateKey)
@@ -46,12 +47,13 @@ object WalletService {
             var token = Token(key = wallet.key, chain_id = chain.chain_id, name = chain.name, symbol = chain.chain_symbol, icon = chain.icon, isNative = true, decimals = 18, sort = 999)
             AppDataBase.getInstance().tokenDao().insert(token)
         }
+
     }
 
     fun initWallet(scope: CoroutineScope, seed: String): Coroutine<Unit> {
         return Coroutine.async(scope) {
             // init wallet
-            val mnemonic = MnemonicUtils.generateMnemonic(Hex.fromStringCondensed(seed))
+            val mnemonic = MnemonicUtils.generateMnemonic(Hex.decode(seed))
             val path = intArrayOf(
                 44 or HARDENED_BIT,
                 60 or HARDENED_BIT,
@@ -59,7 +61,8 @@ object WalletService {
                 0,
                 0
             )
-            val masterKeyPair = Bip32ECKeyPair.generateKeyPair(Hex.fromStringCondensed(seed))
+            val seed = MnemonicUtils.generateSeed(mnemonic, "")
+            val masterKeyPair = Bip32ECKeyPair.generateKeyPair(Hex.decode(seed))
             val bip44Keypair = Bip32ECKeyPair.deriveKeyPair(masterKeyPair, path)
             val credentials = Credentials.create(bip44Keypair)
             val pk = Numeric.toHexStringWithPrefix(bip44Keypair.privateKey)

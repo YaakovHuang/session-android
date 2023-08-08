@@ -10,7 +10,7 @@ import org.thoughtcrime.securesms.PassphraseRequiredActionBarActivity
 import org.thoughtcrime.securesms.util.StatusBarUtil
 
 @AndroidEntryPoint
-class WalletActivity : PassphraseRequiredActionBarActivity() {
+class AddTokenActivity : PassphraseRequiredActionBarActivity() {
 
     private lateinit var binding: ActivityWalletBinding
 
@@ -37,7 +37,7 @@ class WalletActivity : PassphraseRequiredActionBarActivity() {
             swipeRefreshLayout.setOnRefreshListener {
                 initData()
             }
-            recyclerView.layoutManager = LinearLayoutManager(this@WalletActivity)
+            recyclerView.layoutManager = LinearLayoutManager(this@AddTokenActivity)
             recyclerView.adapter = adapter
             adapter.setOnItemClickListener { adapter, _, position ->
                 val token = adapter.data[position] as Token

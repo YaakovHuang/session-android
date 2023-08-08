@@ -9,5 +9,7 @@ object AppConst {
         const val URL_WALLET = "https://fairapi.dappconnect.io"
     }
 
+    const val SHOW_DECIMAL = 6
+    const val CONFIRMATIONS = 5
 
 }

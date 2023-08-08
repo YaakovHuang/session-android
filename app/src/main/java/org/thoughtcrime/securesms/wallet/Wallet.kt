@@ -27,10 +27,10 @@ data class Wallet(
 data class Account(
     @PrimaryKey(autoGenerate = true)
     var id: Int = 0,
-    var key: String?,
-    var chain_id: Int?,
-    var address: String?,
-    var pk: String?,
+    var key: String? = "",
+    var chain_id: Int? = 1,
+    var address: String? = "",
+    var pk: String? = "",
     var isSelect: Boolean = false,
     var sort: Int = 0,
     // u本位总价值
@@ -46,7 +46,7 @@ data class Token(
     var chain_id: Int?,
     var name: String?,
     var symbol: String?,
-    var contract: String= "",
+    var contract: String = "",
     var icon: String?,
     var price: String = "0",
     var isNative: Boolean = false,

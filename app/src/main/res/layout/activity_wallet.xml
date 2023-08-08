@@ -270,7 +270,6 @@
                     android:overScrollMode="never"
                     tools:listitem="@layout/item_token_asset" />
 
-
             </LinearLayout>
 
         </LinearLayout>

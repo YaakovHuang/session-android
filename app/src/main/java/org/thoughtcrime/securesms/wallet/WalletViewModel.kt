@@ -40,9 +40,9 @@ class WalletViewModel(application: Application) : BaseViewModel(application) {
         }
     }
 
-    fun loadTokens(chainId: Int) {
+    fun loadTokens() {
         execute {
-            DaoHelper.loadTokens(chainId)
+            DaoHelper.loadTokens()
         }.onSuccess {
             tokensLiveData.postValue(it)
         }.onError {
