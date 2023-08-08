@@ -10,7 +10,6 @@ import android.os.Bundle
 import android.os.Environment
 import android.provider.MediaStore
 import android.view.View
-import androidx.activity.viewModels
 import androidx.core.view.isVisible
 import com.google.gson.Gson
 import dagger.hilt.android.AndroidEntryPoint
@@ -35,15 +34,12 @@ class CardActivity : PassphraseRequiredActionBarActivity() {
 
     private lateinit var binding: ActivityCardBinding
 
-    private val viewModel by viewModels<CardViewModel>()
-
     override fun onCreate(savedInstanceState: Bundle?, ready: Boolean) {
         super.onCreate(savedInstanceState, ready)
         binding = ActivityCardBinding.inflate(layoutInflater)
         setContentView(binding.root)
         StatusBarUtil.setStatusColor(this, true, false, R.color.core_white)
         initView()
-
     }
 
 

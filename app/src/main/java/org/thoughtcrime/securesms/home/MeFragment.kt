@@ -4,6 +4,7 @@ import android.content.Intent
 import android.os.Bundle
 import android.view.View
 import androidx.fragment.app.viewModels
+import com.lxj.xpopup.XPopup
 import dagger.hilt.android.AndroidEntryPoint
 import network.qki.messenger.R
 import network.qki.messenger.databinding.FragmentMeBinding
@@ -91,8 +92,7 @@ class MeFragment : BaseFragment<ETViewModel>(R.layout.fragment_me) {
                 show(intent)
             }
             ivCard.setOnClickListener {
-                val intent = Intent(context, ETUserCenterActivity::class.java)
-                intent.putExtra(ETUserCenterActivity.KEY_USER, user)
+                val intent = Intent(context, CardActivity::class.java)
                 show(intent)
             }
             llSetting.setOnClickListener {
@@ -100,13 +100,10 @@ class MeFragment : BaseFragment<ETViewModel>(R.layout.fragment_me) {
                 show(intent)
             }
             llInvite.setOnClickListener {
-                val intent = Intent()
-                intent.action = Intent.ACTION_SEND
-                val invitation = getString(R.string.invitation) + "${TextSecurePreferences.getLocalNumber(requireContext())} "
-                intent.putExtra(Intent.EXTRA_TEXT, invitation)
-                intent.type = "text/plain"
-                val chooser = Intent.createChooser(intent, getString(R.string.activity_settings_invite_button_title))
-                startActivity(chooser)
+                XPopup.Builder(context)
+                    .isLightStatusBar(true)
+                    .asCustom(SharePopupView(requireContext()))
+                    .show()
             }
             llAbout.setOnClickListener {
                 val intent = Intent(context, AboutActivity::class.java)

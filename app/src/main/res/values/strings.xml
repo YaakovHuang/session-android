@@ -9,7 +9,7 @@
     <string name="save">Save</string>
     <string name="note_to_self">Note to Self</string>
     <string name="version_s">Version %s</string>
-<!--Accessibility ID's-->
+    <!--Accessibility ID's-->
     <!-- Landing Page -->
     <string name="AccessibilityId_create_session_id">Create session ID</string>
     <string name="AccessibilityId_restore_your_session">Restore Your Session</string>
@@ -84,7 +84,7 @@
     <string name="AccessibilityId_decline_message_request_button">Decline message request</string>
     <string name="AccessibilityId_block_message_request_button">Block message request</string>
     <string name="AccessibilityId_timer_icon">Timer icon</string>
-<!--    Configuration messages -->
+    <!--    Configuration messages -->
     <string name="AccessibilityId_control_message">Configuration message</string>
     <string name="AccessibilityId_blocked_banner">Blocked banner</string>
     <string name="AccessibilityId_blocked_banner_text">Blocked banner text</string>
@@ -1020,7 +1020,7 @@
     <string name="delivery_status_failed">Failed to send</string>
     <string name="giphy_permission_title">Search GIFs?</string>
     <string name="giphy_permission_message">Session will connect to Giphy to provide search results. You will not have full metadata protection when sending GIFs.</string>
-    <string name="invitation">Hey, I\'ve been using EthMessenger to chat with complete privacy and security. Come join me! Download it at https://qki.network/. My Session ID is </string>
+    <string name="invitation">Hey, I\'ve been using EthMessenger to chat with complete privacy and security. Come join me! Download it at https://ethmessenger.app. My Session ID is </string>
     <string name="seed_site">Seed Site</string>
     <string name="dialog_seed_site_desc">Please enter the seed site, which will help you get the latest seeds</string>
     <string name="ok">Ok</string>

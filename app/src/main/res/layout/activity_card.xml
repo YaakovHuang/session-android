@@ -50,7 +50,7 @@
                     android:layout_height="wrap_content"
                     android:layout_alignParentStart="true"
                     android:layout_centerInParent="true"
-                    android:text="@string/AccessibilityId_settings"
+                    android:text="@string/card"
                     android:textColor="@color/core_black"
                     android:textSize="20sp"
                     android:textStyle="bold" />
@@ -68,7 +68,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_centerInParent="true"
-                        android:src="@drawable/ic_scan"
+                        android:src="@drawable/ic_scan_1"
                         app:tint="?attr/colorControlNormal" />
 
                 </RelativeLayout>
