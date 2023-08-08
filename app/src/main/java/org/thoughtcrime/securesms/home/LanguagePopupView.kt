@@ -32,7 +32,6 @@ class LanguagePopupView(
             } else {
                 when (MultiLanguages.getAppLanguage()) {
                     Locale.CHINA -> tvSimple.setTextColor(R.color.color3E66FB)
-                    Locale.TAIWAN -> tvTraditional.setTextColor(R.color.color3E66FB)
                     Locale.ENGLISH -> tvEnglish.setTextColor(R.color.color3E66FB)
                 }
             }
@@ -42,16 +41,12 @@ class LanguagePopupView(
                 dismiss()
 
             }
-            tvTraditional.setOnClickListener {
+            tvEnglish.setOnClickListener {
                 onSelect.invoke(1)
                 dismiss()
             }
-            tvEnglish.setOnClickListener {
-                onSelect.invoke(2)
-                dismiss()
-            }
             tvSystem.setOnClickListener {
-                onSelect.invoke(3)
+                onSelect.invoke(2)
                 dismiss()
             }
         }

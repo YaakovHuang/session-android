@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="?attr/chatsToolbarColor"
@@ -68,19 +67,67 @@
                 android:maxLines="1"
                 android:textSize="16sp"
                 android:textStyle="bold"
-                android:text="Token Contract"
+                android:textColor="@color/color616569"
+                android:text="@string/token_contract"
                 android:layout_height="wrap_content"/>
 
             <EditText
-                android:id="@+id/etContent"
+                android:id="@+id/etContract"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="48dp"
-                android:layout_marginTop="30dp"
-                android:layout_marginEnd="48dp"
-                android:background="@drawable/bg_edittext_6"
-                android:hint="@string/input_nickname"
-                android:lineSpacingMultiplier="1.2"
+                android:layout_marginTop="16dp"
+                android:background="@drawable/bg_input_14"
+                android:hint="@string/hint_input_contract_address"
+                android:paddingStart="20dp"
+                android:paddingTop="16dp"
+                android:paddingEnd="20dp"
+                android:paddingBottom="16dp"
+                android:textColor="?android:textColorPrimary"
+                android:textColorHint="?thirdTextColor"
+                android:textSize="@dimen/small_font_size" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:maxLines="1"
+                android:layout_marginTop="20dp"
+                android:textSize="16sp"
+                android:textStyle="bold"
+                android:textColor="@color/color616569"
+                android:text="@string/symbol"
+                android:layout_height="wrap_content"/>
+
+            <EditText
+                android:id="@+id/etSymbol"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:background="@drawable/bg_input_14"
+                android:hint="@string/hint_input_token_symbol"
+                android:paddingStart="20dp"
+                android:paddingTop="16dp"
+                android:paddingEnd="20dp"
+                android:paddingBottom="16dp"
+                android:textColor="?android:textColorPrimary"
+                android:textColorHint="?thirdTextColor"
+                android:textSize="@dimen/small_font_size" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:maxLines="1"
+                android:layout_marginTop="20dp"
+                android:textSize="16sp"
+                android:textStyle="bold"
+                android:textColor="@color/color616569"
+                android:text="@string/token_decimal"
+                android:layout_height="wrap_content"/>
+
+            <EditText
+                android:id="@+id/etDecimal"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:background="@drawable/bg_input_14"
+                android:hint="18"
                 android:paddingStart="20dp"
                 android:paddingTop="16dp"
                 android:paddingEnd="20dp"

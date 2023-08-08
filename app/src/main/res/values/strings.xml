@@ -1086,5 +1086,10 @@
     <string name="report_success">Report success</string>
     <string name="moments">Moments</string>
     <string name="about">About Us</string>
-
+    <string name="token_contract">Contract Address</string>
+    <string name="hint_input_contract_address">Contract Address</string>
+    <string name="symbol">Symbol</string>
+    <string name="hint_input_token_symbol">Symbol</string>
+    <string name="token_decimal">Decimals</string>
+    <string name="add_custom_token">Add Token</string>
 </resources>

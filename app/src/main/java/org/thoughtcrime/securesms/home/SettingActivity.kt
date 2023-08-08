@@ -1,26 +1,26 @@
 package org.thoughtcrime.securesms.home
 
+import android.content.Intent
+import android.os.Bundle
 import androidx.activity.viewModels
 import androidx.lifecycle.lifecycleScope
 import com.hjq.language.MultiLanguages
 import com.lxj.xpopup.XPopup
+import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collectLatest
+import network.qki.messenger.R
 import network.qki.messenger.databinding.ActivitySettingBinding
 import org.session.libsession.utilities.CacheDataManager
+import org.session.libsession.utilities.TextSecurePreferences
 import org.session.libsession.utilities.getColorFromAttr
+import org.thoughtcrime.securesms.PassphraseRequiredActionBarActivity
+import org.thoughtcrime.securesms.preferences.NotificationSettingsActivity
+import org.thoughtcrime.securesms.preferences.PrivacySettingsActivity
 import org.thoughtcrime.securesms.util.ThemeState
 import org.thoughtcrime.securesms.util.push
 import org.thoughtcrime.securesms.util.themeState
 import org.thoughtcrime.securesms.util.toastOnUi
 import java.util.Locale
-import android.content.Intent
-import android.os.Bundle
-import dagger.hilt.android.AndroidEntryPoint
-import network.qki.messenger.R
-import org.session.libsession.utilities.TextSecurePreferences
-import org.thoughtcrime.securesms.PassphraseRequiredActionBarActivity
-import org.thoughtcrime.securesms.preferences.NotificationSettingsActivity
-import org.thoughtcrime.securesms.preferences.PrivacySettingsActivity
 import javax.inject.Inject
 
 
@@ -88,9 +88,8 @@ class SettingActivity : PassphraseRequiredActionBarActivity() {
                     .asCustom(LanguagePopupView(this@SettingActivity) { position ->
                         var restart = when (position) {
                             0 -> MultiLanguages.setAppLanguage(this@SettingActivity, Locale.CHINA)
-                            1 -> MultiLanguages.setAppLanguage(this@SettingActivity, Locale.TAIWAN)
-                            2 -> MultiLanguages.setAppLanguage(this@SettingActivity, Locale.ENGLISH)
-                            3 -> MultiLanguages.clearAppLanguage(this@SettingActivity)
+                            1 -> MultiLanguages.setAppLanguage(this@SettingActivity, Locale.ENGLISH)
+                            2 -> MultiLanguages.clearAppLanguage(this@SettingActivity)
                             else -> false
                         }
                         if (restart) {
@@ -235,7 +234,6 @@ class SettingActivity : PassphraseRequiredActionBarActivity() {
         } else {
             when (MultiLanguages.getAppLanguage()) {
                 Locale.CHINA -> binding.tvLanguage.text = "简体中文"
-                Locale.TAIWAN -> binding.tvLanguage.text = "繁体中文"
                 Locale.ENGLISH -> binding.tvLanguage.text = "English"
             }
         }

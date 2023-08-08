@@ -1068,4 +1068,11 @@
     <string name="report_success">举报成功</string>
     <string name="moments">Moments</string>
     <string name="about">关于我们</string>
+    <string name="token_contract">代币合约</string>
+    <string name="hint_input_contract_address">请输入合约地址</string>
+    <string name="symbol">代币符号</string>
+    <string name="hint_input_token_symbol">请输入代币符号</string>
+    <string name="token_decimal">代币精度</string>
+    <string name="add_custom_token">添加自定义代币</string>
+
 </resources>

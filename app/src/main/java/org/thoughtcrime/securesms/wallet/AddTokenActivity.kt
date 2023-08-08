@@ -2,29 +2,26 @@ package org.thoughtcrime.securesms.wallet
 
 import android.os.Bundle
 import androidx.activity.viewModels
-import androidx.recyclerview.widget.LinearLayoutManager
 import dagger.hilt.android.AndroidEntryPoint
 import network.qki.messenger.R
-import network.qki.messenger.databinding.ActivityWalletBinding
+import network.qki.messenger.databinding.ActivityAddTokenBinding
+import org.session.libsession.utilities.TextSecurePreferences
+import org.session.libsession.utilities.getColorFromAttr
 import org.thoughtcrime.securesms.PassphraseRequiredActionBarActivity
 import org.thoughtcrime.securesms.util.StatusBarUtil
 
 @AndroidEntryPoint
 class AddTokenActivity : PassphraseRequiredActionBarActivity() {
 
-    private lateinit var binding: ActivityWalletBinding
+    private lateinit var binding: ActivityAddTokenBinding
 
     private val viewModel by viewModels<WalletViewModel>()
 
-    private val adapter by lazy {
-        TokenAdapter()
-    }
-
     override fun onCreate(savedInstanceState: Bundle?, ready: Boolean) {
         super.onCreate(savedInstanceState, ready)
-        binding = ActivityWalletBinding.inflate(layoutInflater)
+        binding = ActivityAddTokenBinding.inflate(layoutInflater)
         setContentView(binding.root)
-        StatusBarUtil.setStatusColor(this, true, false, R.color.core_white)
+        StatusBarUtil.setStatusColor(this, false, TextSecurePreferences.CLASSIC_DARK != TextSecurePreferences.getThemeStyle(this), getColorFromAttr(R.attr.chatsToolbarColor))
     }
 
     override fun initViews() {
@@ -34,32 +31,13 @@ class AddTokenActivity : PassphraseRequiredActionBarActivity() {
         actionBar.setDisplayHomeAsUpEnabled(true)
         actionBar.setHomeButtonEnabled(true)
         with(binding) {
-            swipeRefreshLayout.setOnRefreshListener {
-                initData()
-            }
-            recyclerView.layoutManager = LinearLayoutManager(this@AddTokenActivity)
-            recyclerView.adapter = adapter
-            adapter.setOnItemClickListener { adapter, _, position ->
-                val token = adapter.data[position] as Token
-//                val intent = Intent(context, ETDetailActivity::class.java)
-//                intent.putExtra(ETFragment.KEY_ET, et)
-//                show(intent)
-            }
+            tvAppName.text = getString(R.string.add_custom_token)
         }
-    }
-
-    override fun initData() {
-        super.initData()
-        viewModel.loadTokens()
     }
 
     override fun initObserver() {
         super.initObserver()
-        viewModel.tokensLiveData.observe(this) {
-            stopRefreshing(binding.swipeRefreshLayout)
-            adapter.data.clear()
-            adapter.setNewInstance(it as MutableList<Token>?)
-        }
+
     }
 
 
