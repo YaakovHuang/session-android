@@ -30,6 +30,12 @@ abstract class RpcDao {
     @Query("select * from rpc where customize = :customize")
     abstract fun loadRpcs(customize: Boolean): List<Rpc>?
 
+    @Query("select * from rpc where chainId = :chainId and isSelect = 1 limit 1")
+    abstract fun loadSelectRpc(chainId: Int): Rpc
+
+    @Query("select * from rpc where chainId = :chainId")
+    abstract fun loadRpcsByChainId(chainId: Int): List<Rpc>
+
     @Query("delete from rpc where customize = 0")
     abstract fun deleteAllRpcs()
 

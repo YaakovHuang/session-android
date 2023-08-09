@@ -1,6 +1,8 @@
 package org.thoughtcrime.securesms.database.room
 
 import org.thoughtcrime.securesms.wallet.Account
+import org.thoughtcrime.securesms.wallet.Chain
+import org.thoughtcrime.securesms.wallet.Rpc
 import org.thoughtcrime.securesms.wallet.Token
 import org.thoughtcrime.securesms.wallet.Wallet
 
@@ -27,5 +29,50 @@ object DaoHelper {
         return AppDataBase.getInstance().tokenDao().loadTokens(account.chain_id!!)
     }
 
+    fun loadToken(contract: String): Token {
+        return AppDataBase.getInstance().tokenDao().loadToken(contract)
+    }
 
+    fun insertToken(token: Token) {
+        return AppDataBase.getInstance().tokenDao().insert(token)
+    }
+
+    fun updateToken(token: Token) {
+        return AppDataBase.getInstance().tokenDao().update(token)
+    }
+
+    fun loadSelectRpc(chainId: Int): Rpc {
+        var rpc = AppDataBase.getInstance().rpcDao().loadSelectRpc(chainId)
+        if (rpc == null) {
+            rpc = AppDataBase.getInstance().rpcDao().loadRpcsByChainId(chainId)[0]
+        }
+        return rpc
+    }
+
+    fun loadSelectChain(): Chain {
+        val account = AppDataBase.getInstance().accountDao().loadSelectAccount()
+        return AppDataBase.getInstance().chainDao().loadChain(account.chain_id!!)
+    }
+
+    fun loadAllChains(): List<Chain> {
+        return AppDataBase.getInstance().chainDao().loadAll()
+    }
+
+    fun updateSelectAccount(chain: Chain) {
+        val accounts = AppDataBase.getInstance().accountDao().loadAll()
+        var selectAccount: Account? = null
+        accounts.forEach { account ->
+            if (account.chain_id == chain.chain_id) {
+                selectAccount = account
+            }
+            if (account.isSelect) {
+                account.isSelect = false
+                AppDataBase.getInstance().accountDao().update(account)
+            }
+        }
+        selectAccount?.let {
+            it.isSelect = true
+            AppDataBase.getInstance().accountDao().update(it)
+        }
+    }
 }

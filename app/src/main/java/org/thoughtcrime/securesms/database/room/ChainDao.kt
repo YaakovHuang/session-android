@@ -27,4 +27,7 @@ abstract class ChainDao {
     @Query("select * from chain")
     abstract fun loadAll(): List<Chain>
 
+    @Query("select * from chain where chain_id = :chainId limit 1")
+    abstract fun loadChain(chainId: Int): Chain
+
 }

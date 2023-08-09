@@ -3,14 +3,26 @@ package org.thoughtcrime.securesms.wallet
 import kotlinx.coroutines.CoroutineScope
 import org.bouncycastle.util.encoders.Hex
 import org.thoughtcrime.securesms.database.room.AppDataBase
+import org.thoughtcrime.securesms.database.room.DaoHelper
+import org.thoughtcrime.securesms.net.network.CommonClient
 import org.thoughtcrime.securesms.util.DeviceUtils
 import org.thoughtcrime.securesms.util.KeyStoreUtils
+import org.thoughtcrime.securesms.util.Logger
 import org.thoughtcrime.securesms.util.coroutine.Coroutine
+import org.web3j.abi.FunctionEncoder
+import org.web3j.abi.FunctionReturnDecoder
+import org.web3j.abi.TypeReference
+import org.web3j.abi.datatypes.Function
+import org.web3j.abi.datatypes.Type
 import org.web3j.crypto.Bip32ECKeyPair
 import org.web3j.crypto.Bip32ECKeyPair.HARDENED_BIT
 import org.web3j.crypto.Credentials
 import org.web3j.crypto.Keys
 import org.web3j.crypto.MnemonicUtils
+import org.web3j.protocol.Web3j
+import org.web3j.protocol.core.DefaultBlockParameterName
+import org.web3j.protocol.core.Response
+import org.web3j.protocol.core.methods.request.Transaction
 import org.web3j.utils.Numeric
 
 /**
@@ -92,4 +104,42 @@ object WalletService {
             return@async Numeric.toHexStringWithPrefix(bip44Keypair.privateKey)
         }.timeout(20000)
     }
+
+    fun ethCall(
+        chainId: Int,
+        fromAddress: String,
+        toAddress: String,
+        function: Function,
+    ): EthResponse {
+        val encodedFunction = FunctionEncoder.encode(function)
+        val transaction = Transaction.createEthCallTransaction(
+            fromAddress, toAddress, encodedFunction
+        )
+        val ethCall = loadClient(chainId).ethCall(transaction, DefaultBlockParameterName.LATEST).send()
+        return if (ethCall.hasError()) {
+            Logger.e(Exception("${ethCall.error.code}: ${ethCall.error.message}"))
+            EthResponse(
+                transactionHash = "",
+                values = listOf(0)
+            )
+        } else {
+            EthResponse(
+                transactionHash = "",
+                values = ethCall.parseValues(function.outputParameters),
+            )
+        }
+    }
+}
+
+fun loadClient(chainId: Int): Web3j {
+    val rpc = DaoHelper.loadSelectRpc(chainId)
+    return CommonClient.instance(rpc.rpc)
+}
+
+private fun Response<String>.parseValues(outParams: List<TypeReference<Type<*>>>): List<Any> {
+    if (outParams.isEmpty()) {
+        return emptyList()
+    }
+    Logger.d(result)
+    return FunctionReturnDecoder.decode(result, outParams).map { it.value }
 }

@@ -8,11 +8,17 @@ import org.thoughtcrime.securesms.database.room.AppDataBase
 import org.thoughtcrime.securesms.database.room.DaoHelper
 import org.thoughtcrime.securesms.net.network.ApiService
 import org.thoughtcrime.securesms.util.DeviceUtils
+import org.thoughtcrime.securesms.util.FunctionUtils
 import org.thoughtcrime.securesms.util.Logger
+import java.math.BigInteger
 
 class WalletViewModel(application: Application) : BaseViewModel(application) {
 
     val tokensLiveData = MutableLiveData<List<Token>>()
+    val symbolLiveData = MutableLiveData<String>()
+    val decimalLiveData = MutableLiveData<String>()
+    val saveStatusLiveData = MutableLiveData<Boolean>()
+    var errorCode = MutableLiveData<Int>()
 
     private val apiService by lazy {
         ApiService()
@@ -50,6 +56,28 @@ class WalletViewModel(application: Application) : BaseViewModel(application) {
         }
     }
 
+    fun loadSymbol(chainId: Int, from: String, to: String) {
+        execute {
+            WalletService.ethCall(chainId, from, to, FunctionUtils.encodeSymbol())
+        }.onSuccess {
+            symbolLiveData.postValue(it.values[0] as String)
+        }.onError {
+            errorCode.postValue(-1)
+            Logger.e(it.message)
+        }
+    }
+
+    fun loadDecimals(chainId: Int, from: String, to: String) {
+        execute {
+            WalletService.ethCall(chainId, from, to, FunctionUtils.encodeDecimals())
+        }.onSuccess {
+            decimalLiveData.postValue((it.values[0] as BigInteger).toString())
+        }.onError {
+            errorCode.postValue(-1)
+            Logger.e(it.message)
+        }
+    }
+
 
     private fun dealConfig(appConfig: AppConfig) {
         val chains = appConfig.network
@@ -70,9 +98,9 @@ class WalletViewModel(application: Application) : BaseViewModel(application) {
                 AppDataBase.getInstance().rpcDao().deleteAllRpcs()
                 TextSecurePreferences.setDeleteRPC(context, true)
             }
-            rpcList.forEachIndexed { _, rpc ->
-                val contains = localRpcs?.contains(rpc)
-                if (contains == true) {
+            rpcList.forEach { rpc ->
+                val contains = contains(localRpcs, rpc)
+                if (contains) {
                     val rpc1 = AppDataBase.getInstance().rpcDao().loadRpcByRpc(rpc.rpc ?: "")
                     rpc1?.let {
                         rpc.id = rpc1.id
@@ -84,7 +112,7 @@ class WalletViewModel(application: Application) : BaseViewModel(application) {
                 }
             }
             localRpcs?.forEach { rpc ->
-                val contains = rpcList.contains(rpc)
+                val contains = contains(rpcList, rpc)
                 if (!contains) {
                     AppDataBase.getInstance().rpcDao().deleteRpc(rpc.rpc ?: "")
                 }
@@ -94,5 +122,15 @@ class WalletViewModel(application: Application) : BaseViewModel(application) {
         }
 
     }
+
+    fun contains(list: List<Rpc>?, rpc: Rpc): Boolean {
+        list?.forEach {
+            if (it.rpc == rpc.rpc) {
+                return true
+            }
+        }
+        return false
+    }
+
 
 }

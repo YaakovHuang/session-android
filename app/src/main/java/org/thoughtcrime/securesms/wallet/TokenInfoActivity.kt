@@ -7,21 +7,18 @@ import android.text.TextWatcher
 import androidx.activity.viewModels
 import dagger.hilt.android.AndroidEntryPoint
 import network.qki.messenger.R
-import network.qki.messenger.databinding.ActivityAddTokenBinding
-import org.greenrobot.eventbus.EventBus
+import network.qki.messenger.databinding.ActivityTokenInfoBinding
 import org.session.libsession.utilities.TextSecurePreferences
 import org.session.libsession.utilities.getColorFromAttr
 import org.thoughtcrime.securesms.PassphraseRequiredActionBarActivity
 import org.thoughtcrime.securesms.database.room.DaoHelper
-import org.thoughtcrime.securesms.et.TokenUpdateEvent
 import org.thoughtcrime.securesms.util.StatusBarUtil
 import org.thoughtcrime.securesms.util.parcelable
 import org.thoughtcrime.securesms.util.toastOnUi
 
-@AndroidEntryPoint
-class AddTokenActivity : PassphraseRequiredActionBarActivity() {
+class TokenInfoActivity : PassphraseRequiredActionBarActivity() {
 
-    private lateinit var binding: ActivityAddTokenBinding
+    private lateinit var binding: ActivityTokenInfoBinding
 
     private val viewModel by viewModels<WalletViewModel>()
     private var token: Token? = null
@@ -31,10 +28,13 @@ class AddTokenActivity : PassphraseRequiredActionBarActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?, ready: Boolean) {
         super.onCreate(savedInstanceState, ready)
-        binding = ActivityAddTokenBinding.inflate(layoutInflater)
+        binding = ActivityTokenInfoBinding.inflate(layoutInflater)
         setContentView(binding.root)
         StatusBarUtil.setStatusColor(this, false, TextSecurePreferences.CLASSIC_DARK != TextSecurePreferences.getThemeStyle(this), getColorFromAttr(R.attr.chatsToolbarColor))
         token = intent.parcelable(WalletActivity.KEY_TOKEN)
+        token?.let {
+
+        } ?: finish()
     }
 
     override fun initViews() {
@@ -49,11 +49,11 @@ class AddTokenActivity : PassphraseRequiredActionBarActivity() {
             } else {
                 getString(R.string.edit)
             }
-           token?.apply {
-               etContract.setText(contract)
-               etSymbol.setText(symbol)
-               etDecimal.setText(decimals)
-           }
+            token?.apply {
+                etContract.setText(contract)
+                etSymbol.setText(symbol)
+                etDecimal.setText(decimals)
+            }
             etContract.addTextChangedListener(object : TextWatcher {
                 override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {
 
@@ -72,33 +72,6 @@ class AddTokenActivity : PassphraseRequiredActionBarActivity() {
                 }
 
             })
-            tvSave.setOnClickListener {
-                val contract = etContract.text.toString().trim()
-                var symbol = etSymbol.text.toString().trim()
-                var decimals = etDecimal.text.toString().trim()
-                if (TextUtils.isEmpty(contract) || TextUtils.isEmpty(symbol) || TextUtils.isEmpty(decimals)) {
-                    toastOnUi(R.string.no_data)
-                    return@setOnClickListener
-                }
-                if (token == null) {
-                    val localToken = DaoHelper.loadToken(contract)
-                    if (localToken != null) {
-                        toastOnUi(R.string.currency_exist_error)
-                    } else {
-                        var token = Token(key = account.key, chain_id = account.chain_id, name = symbol, symbol = symbol, icon = "", isNative = false, decimals = decimals.toInt(), sort = 0)
-                        DaoHelper.insertToken(token)
-                        EventBus.getDefault().post(TokenUpdateEvent(null))
-                        finish()
-                    }
-                } else {
-                    token!!.symbol = symbol
-                    token!!.decimals = decimals.toInt()
-                    DaoHelper.updateToken(token!!)
-                    EventBus.getDefault().post(TokenUpdateEvent(null))
-                    finish()
-                }
-            }
-
         }
     }
 

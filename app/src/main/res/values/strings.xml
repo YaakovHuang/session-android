@@ -1092,4 +1092,7 @@
     <string name="hint_input_token_symbol">Symbol</string>
     <string name="token_decimal">Decimals</string>
     <string name="add_custom_token">Add Token</string>
+    <string name="customize_currency_contract_error">Unable to get Symbol and Decimals</string>
+    <string name="currency_exist_error">Token already exists</string>
+    <string name="select_network">Network</string>
 </resources>
