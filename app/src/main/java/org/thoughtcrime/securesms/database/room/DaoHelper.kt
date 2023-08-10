@@ -4,6 +4,7 @@ import org.thoughtcrime.securesms.wallet.Account
 import org.thoughtcrime.securesms.wallet.Chain
 import org.thoughtcrime.securesms.wallet.Rpc
 import org.thoughtcrime.securesms.wallet.Token
+import org.thoughtcrime.securesms.wallet.Transaction
 import org.thoughtcrime.securesms.wallet.Wallet
 
 /**
@@ -74,5 +75,17 @@ object DaoHelper {
             it.isSelect = true
             AppDataBase.getInstance().accountDao().update(it)
         }
+    }
+
+    fun insertTx(tx: Transaction) {
+        AppDataBase.getInstance().transactionDao().insert(tx)
+    }
+
+    fun deleteTx(tx: Transaction) {
+        AppDataBase.getInstance().transactionDao().delete(tx)
+    }
+
+    fun loadTxs(address: String, chainId: Int, isNative: Boolean): List<Transaction> {
+        return AppDataBase.getInstance().transactionDao().loadTxs(address, chainId, isNative)
     }
 }

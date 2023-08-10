@@ -39,7 +39,7 @@ class ETEditUserActivity : PassphraseRequiredActionBarActivity() {
         super.onCreate(savedInstanceState, ready)
         binding = ActivityUserEtEditBinding.inflate(layoutInflater)
         setContentView(binding.root)
-        StatusBarUtil.setStatusColor(this, false, TextSecurePreferences.CLASSIC_DARK != TextSecurePreferences.getThemeStyle(this), getColorFromAttr(R.attr.chatsToolbarColor))
+        StatusBarUtil.setStatusColor(this, false, TextSecurePreferences.CLASSIC_DARK != TextSecurePreferences.getThemeStyle(this), getColorFromAttr(R.attr.commonToolbarColor))
         setSupportActionBar(binding.toolbar)
         val actionBar = supportActionBar ?: return
         actionBar.setDisplayHomeAsUpEnabled(true)

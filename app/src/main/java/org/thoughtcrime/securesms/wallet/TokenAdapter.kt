@@ -3,21 +3,21 @@ package org.thoughtcrime.securesms.wallet
 import com.chad.library.adapter.base.BaseQuickAdapter
 import com.chad.library.adapter.base.viewholder.BaseViewHolder
 import network.qki.messenger.R
-import network.qki.messenger.databinding.ItemTokenAssetBinding
+import network.qki.messenger.databinding.ItemTokenBinding
 import org.thoughtcrime.securesms.constants.AppConst
 import org.thoughtcrime.securesms.util.EthereumUtil
 import org.thoughtcrime.securesms.util.GlideHelper
 import java.math.BigDecimal
 
-class TokenAdapter : BaseQuickAdapter<Token, BaseViewHolder>(R.layout.item_token_asset) {
+class TokenAdapter : BaseQuickAdapter<Token, BaseViewHolder>(R.layout.item_token) {
 
 
     override fun onItemViewHolderCreated(viewHolder: BaseViewHolder, viewType: Int) {
-        ItemTokenAssetBinding.bind(viewHolder.itemView)
+        ItemTokenBinding.bind(viewHolder.itemView)
     }
 
     override fun convert(holder: BaseViewHolder, item: Token) {
-        with(ItemTokenAssetBinding.bind(holder.itemView)) {
+        with(ItemTokenBinding.bind(holder.itemView)) {
             GlideHelper.showImage(
                 ivLogo,
                 item.icon ?: "",

@@ -24,7 +24,6 @@ import org.session.libsignal.streams.ProfileCipherOutputStreamFactory
 import org.session.libsignal.utilities.ProfileAvatarData
 import org.thoughtcrime.securesms.BaseViewModel
 import org.thoughtcrime.securesms.constants.AppConst
-import org.thoughtcrime.securesms.home.web3.TransactionService
 import org.thoughtcrime.securesms.mediasend.Media
 import org.thoughtcrime.securesms.mms.GlideApp
 import org.thoughtcrime.securesms.net.network.ApiService
@@ -32,6 +31,7 @@ import org.thoughtcrime.securesms.net.network.IpfsResponse
 import org.thoughtcrime.securesms.util.IntentType
 import org.thoughtcrime.securesms.util.Logger
 import org.thoughtcrime.securesms.util.toastOnUi
+import org.thoughtcrime.securesms.wallet.web3.TransactionService
 import java.io.ByteArrayInputStream
 import java.io.ByteArrayOutputStream
 import java.io.File

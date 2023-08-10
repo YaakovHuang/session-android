@@ -8,6 +8,7 @@ import com.lxj.xpopup.XPopup
 import dagger.hilt.android.AndroidEntryPoint
 import network.qki.messenger.R
 import network.qki.messenger.databinding.ActivityWalletBinding
+import org.session.libsession.utilities.TextSecurePreferences
 import org.thoughtcrime.securesms.PassphraseRequiredActionBarActivity
 import org.thoughtcrime.securesms.database.room.DaoHelper
 import org.thoughtcrime.securesms.util.GlideHelper
@@ -71,6 +72,11 @@ class WalletActivity : PassphraseRequiredActionBarActivity() {
                     })
                     .show()
             }
+            ivView.setOnCheckedChangeListener { _, isChecked ->
+                // TODO:  
+                TextSecurePreferences.setHide(this@WalletActivity, isChecked)
+            }
+
         }
     }
 

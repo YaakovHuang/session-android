@@ -1095,4 +1095,10 @@
     <string name="customize_currency_contract_error">Unable to get Symbol and Decimals</string>
     <string name="currency_exist_error">Token already exists</string>
     <string name="select_network">Network</string>
+    <string name="balance">Balance</string>
+    <string name="scan_qr_to_transfer">Scan QR code to transfer funds</string>
+    <string name="assets">Assets</string>
+    <string name="receiver">Receiver</string>
+    <string name="amount">Amount</string>
+    <string name="all">All</string>
 </resources>

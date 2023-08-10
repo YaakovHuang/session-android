@@ -268,7 +268,7 @@
                     android:layout_height="0dp"
                     android:layout_weight="1"
                     android:overScrollMode="never"
-                    tools:listitem="@layout/item_token_asset" />
+                    tools:listitem="@layout/item_token" />
 
             </LinearLayout>
 

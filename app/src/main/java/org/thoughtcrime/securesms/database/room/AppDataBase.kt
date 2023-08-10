@@ -9,6 +9,7 @@ import org.thoughtcrime.securesms.wallet.Account
 import org.thoughtcrime.securesms.wallet.Chain
 import org.thoughtcrime.securesms.wallet.Rpc
 import org.thoughtcrime.securesms.wallet.Token
+import org.thoughtcrime.securesms.wallet.Transaction
 import org.thoughtcrime.securesms.wallet.Wallet
 
 /**
@@ -16,11 +17,13 @@ import org.thoughtcrime.securesms.wallet.Wallet
  * Describe:
  */
 @Database(
-    entities = [Wallet::class, Chain::class, Rpc::class, Account::class, Token::class],
-    version = 3,
+    entities = [Wallet::class, Chain::class, Rpc::class, Account::class, Token::class, Transaction::class],
+    version = 5,
     autoMigrations = [
         AutoMigration(from = 1, to = 2),
-        AutoMigration(from = 2, to = 3)
+        AutoMigration(from = 2, to = 3),
+        AutoMigration(from = 3, to = 4),
+        AutoMigration(from = 4, to = 5)
     ]
 )
 abstract class AppDataBase : RoomDatabase() {
@@ -30,6 +33,7 @@ abstract class AppDataBase : RoomDatabase() {
     abstract fun chainDao(): ChainDao
     abstract fun accountDao(): AccountDao
     abstract fun tokenDao(): TokenDao
+    abstract fun transactionDao(): TransactionDao
 
     companion object {
         private const val DATABASE_NAME = "messenger.db"

@@ -5,7 +5,7 @@
     android:id="@+id/contentView"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="?attr/chatsToolbarColor"
+    android:background="?attr/commonToolbarColor"
     android:orientation="vertical"
     tools:context="org.thoughtcrime.securesms.home.HomeActivity">
 
@@ -13,7 +13,7 @@
         android:id="@+id/toolbar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="?attr/chatsToolbarColor"
+        android:background="?attr/commonToolbarColor"
         app:contentInsetStart="0dp">
 
         <LinearLayout

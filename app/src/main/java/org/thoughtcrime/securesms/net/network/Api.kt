@@ -8,6 +8,7 @@ import org.thoughtcrime.securesms.et.Nonce
 import org.thoughtcrime.securesms.et.User
 import org.thoughtcrime.securesms.et.UserInfo
 import org.thoughtcrime.securesms.wallet.AppConfig
+import org.thoughtcrime.securesms.wallet.Transaction
 import retrofit2.http.*
 
 interface Api {
@@ -16,6 +17,11 @@ interface Api {
         const val URL_BASE = "url_name:base"
         const val URL_IPFS = "url_name:ipfs"
         const val URL_WALLET = "url_name:wallet"
+        const val URL_ETH_SCAN = "url_name:etherscan"
+        const val URL_OP_SCAN = "url_name:opscan"
+        const val URL_BSC_SCAN = "url_name:bscscan"
+        const val URL_MATIC_SCAN = "url_name:maticscan"
+        const val URL_ARB_SCAN = "url_name:arbscan"
     }
 
     @Headers(URL_BASE)
@@ -100,4 +106,101 @@ interface Api {
     @Headers(URL_WALLET)
     @GET("/api/v1/app_config")
     suspend fun loadConfig(@Query("device_id") deviceId: String, @Query("model") model: String, @Query("source") source: String): BaseWalletResponse<AppConfig?>
+
+
+    @Headers(URL_ETH_SCAN)
+    @GET("/api?module=account&action=txlist&startblock=0&endblock=99999999&sort=desc")
+    suspend fun loadEthNormalTransactions(
+        @Query("address") address: String,
+        @Query("apikey") apikey: String,
+        @Query("page") page: Int,
+        @Query("offset") offset: Int
+    ): ScanResponse<List<Transaction>>
+
+    @Headers(URL_ETH_SCAN)
+    @GET("/api?module=account&action=tokentx&sort=desc")
+    suspend fun loadErc20Transactions(
+        @Query("address") address: String,
+        @Query("contractAddress") contractAddress: String,
+        @Query("apikey") apikey: String,
+        @Query("page") page: Int,
+        @Query("offset") offset: Int
+    ): ScanResponse<List<Transaction>>
+
+    @Headers(URL_OP_SCAN)
+    @GET("/api?module=account&action=txlist&startblock=0&endblock=99999999&sort=desc")
+    suspend fun loadOpNormalTransactions(
+        @Query("address") address: String,
+        @Query("apikey") apikey: String,
+        @Query("page") page: Int,
+        @Query("offset") offset: Int
+    ): ScanResponse<List<Transaction>>
+
+    @Headers(URL_OP_SCAN)
+    @GET("/api?module=account&action=tokentx&sort=desc")
+    suspend fun loadOpErc20Transactions(
+        @Query("address") address: String,
+        @Query("contractAddress") contractAddress: String,
+        @Query("apikey") apikey: String,
+        @Query("page") page: Int,
+        @Query("offset") offset: Int
+    ): ScanResponse<List<Transaction>>
+
+    @Headers(URL_BSC_SCAN)
+    @GET("/api?module=account&action=txlist&startblock=0&endblock=99999999&sort=desc")
+    suspend fun loadBscNormalTransactions(
+        @Query("address") address: String,
+        @Query("apikey") apikey: String,
+        @Query("page") page: Int,
+        @Query("offset") offset: Int
+    ): ScanResponse<List<Transaction>>
+
+    @Headers(URL_BSC_SCAN)
+    @GET("/api?module=account&action=tokentx&sort=desc")
+    suspend fun loadBscErc20Transactions(
+        @Query("address") address: String,
+        @Query("contractAddress") contractAddress: String,
+        @Query("apikey") apikey: String,
+        @Query("page") page: Int,
+        @Query("offset") offset: Int
+    ): ScanResponse<List<Transaction>>
+
+    @Headers(URL_MATIC_SCAN)
+    @GET("/api?module=account&action=txlist&startblock=0&endblock=99999999&sort=desc")
+    suspend fun loadMaticNormalTransactions(
+        @Query("address") address: String,
+        @Query("apikey") apikey: String,
+        @Query("page") page: Int,
+        @Query("offset") offset: Int
+    ): ScanResponse<List<Transaction>>
+
+    @Headers(URL_MATIC_SCAN)
+    @GET("/api?module=account&action=tokentx&sort=desc")
+    suspend fun loadMaticErc20Transactions(
+        @Query("address") address: String,
+        @Query("contractAddress") contractAddress: String,
+        @Query("apikey") apikey: String,
+        @Query("page") page: Int,
+        @Query("offset") offset: Int
+    ): ScanResponse<List<Transaction>>
+
+    @Headers(URL_ARB_SCAN)
+    @GET("/api?module=account&action=txlist&startblock=0&endblock=99999999&sort=desc")
+    suspend fun loadArbNormalTransactions(
+        @Query("address") address: String,
+        @Query("apikey") apikey: String,
+        @Query("page") page: Int,
+        @Query("offset") offset: Int
+    ): ScanResponse<List<Transaction>>
+
+    @Headers(URL_ARB_SCAN)
+    @GET("/api?module=account&action=tokentx&sort=desc")
+    suspend fun loadArbErc20Transactions(
+        @Query("address") address: String,
+        @Query("contractAddress") contractAddress: String,
+        @Query("apikey") apikey: String,
+        @Query("page") page: Int,
+        @Query("offset") offset: Int
+    ): ScanResponse<List<Transaction>>
+
 }

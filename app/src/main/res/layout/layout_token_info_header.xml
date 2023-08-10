@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:gravity="center"
+    android:orientation="vertical"
+    android:padding="20dp">
+
+    <org.thoughtcrime.securesms.util.CircleImageView
+        android:id="@+id/ivLogo"
+        android:layout_width="60dp"
+        android:layout_height="60dp"
+        android:layout_marginTop="20dp"
+        tools:src="@drawable/ic_launcher_round" />
+
+    <TextView
+        android:id="@+id/tvSymbol"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:maxLines="1"
+        android:textColor="?reverseMainColor"
+        android:textSize="16sp"
+        android:textStyle="bold"
+        tools:text="USDT" />
+
+    <TextView
+        android:id="@+id/tvPrice"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="6dp"
+        android:maxLines="1"
+        android:textColor="?reverseMainColor"
+        android:textSize="15sp"
+        android:textStyle="bold"
+        tools:text="$22,236.822" />
+
+    <TextView
+        android:id="@+id/tvAddress"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="13dp"
+        android:background="@drawable/shape_id_bg_40"
+        android:backgroundTint="?addressBgColor"
+        android:drawableEnd="@drawable/ic_copy"
+        android:drawablePadding="4dp"
+        android:maxLines="1"
+        android:paddingStart="30dp"
+        android:paddingTop="8dp"
+        android:paddingEnd="30dp"
+        android:paddingBottom="8dp"
+        android:textColor="@color/color616569"
+        android:textSize="12sp"
+        tools:text="0X3641…2548A5" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:gravity="center_vertical"
+        android:orientation="horizontal">
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="@string/balance"
+            android:textColor="@color/color616569"
+            android:textSize="16sp"
+            android:textStyle="bold" />
+
+        <TextView
+            android:id="@+id/tvBalance"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="?reverseMainColor"
+            android:textSize="16sp"
+            android:textStyle="bold"
+            tools:text="2000" />
+
+    </LinearLayout>
+
+    <TextView
+        android:id="@+id/tvValue"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:gravity="center|end"
+        android:maxLines="1"
+        android:textColor="@color/color616569"
+        android:textSize="14sp"
+        tools:text="$16.82" />
+
+    <View
+        android:id="@+id/view2"
+        android:layout_width="match_parent"
+        android:layout_height="1px"
+        android:layout_marginTop="16dp"
+        android:background="?borderColor" />
+
+</LinearLayout>

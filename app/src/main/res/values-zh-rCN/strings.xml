@@ -1077,5 +1077,11 @@
     <string name="customize_currency_contract_error">无法获取Symbol和Decimals</string>
     <string name="currency_exist_error">代币已经存在</string>
     <string name="select_network">选择网络</string>
+    <string name="balance">余额</string>
+    <string name="scan_qr_to_transfer">扫描二维码，向我支付</string>
+    <string name="assets">资产</string>
+    <string name="receiver">接收地址</string>
+    <string name="amount">数量</string>
+    <string name="all">全部</string>
 
 </resources>

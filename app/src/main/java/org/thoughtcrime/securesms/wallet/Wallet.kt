@@ -28,7 +28,7 @@ data class Account(
     @PrimaryKey(autoGenerate = true)
     var id: Int = 0,
     var key: String? = "",
-    var chain_id: Int? = 1,
+    var chain_id: Int = 1,
     var address: String? = "",
     var pk: String? = "",
     var isSelect: Boolean = false,
@@ -43,7 +43,8 @@ data class Token(
     @PrimaryKey(autoGenerate = true)
     var id: Int = 0,
     var key: String?,
-    var chain_id: Int?,
+    var network: String = "",
+    var chain_id: Int = 0,
     var name: String?,
     var symbol: String?,
     var contract: String = "",
@@ -53,7 +54,7 @@ data class Token(
     var decimals: Int = 0,
     var balance: String = "0",
     // u本位总价值
-    var value: String = "",
+    var value: String = "0",
     var sort: Int = 0
 ) : Parcelable
 
@@ -73,7 +74,7 @@ data class Config(
 data class Chain(
     @PrimaryKey(autoGenerate = true)
     var id: Int = 0,
-    var chain_id: Int?,
+    var chain_id: Int,
     var name: String?,
     var chain_name: String?,
     var chain_symbol: String?,
@@ -89,6 +90,50 @@ data class Chain(
     @Ignore
     var rpc: List<Rpc>? = null
 }
+
+@Entity
+@Parcelize
+data class Transaction(
+    @PrimaryKey(autoGenerate = true)
+    var id: Int = 0,
+    var key: String,
+    var isNative: Boolean = false,
+    var chainId: Int = 0,
+    var showDecimals: Int = 0,
+    var data: String? = null,
+    var gasDefault: Boolean = false,
+    // 主网代币
+    var blockNumber: String? = null,
+
+    // 秒为单位
+    var timeStamp: Long = 0,
+    var hash: String,
+    var nonce: String? = null,
+    var blockHash: String? = null,
+    var transactionIndex: String? = null,
+    var from: String? = null,
+    var to: String? = null,
+    var value: String? = null,
+    //var gas: BigInteger? = null,
+    var gasPrice: String? = null,
+    var gas: String? = null,
+    var isError: Int = 0,
+    var txreceipt_status: Int = 0,
+    var input: String? = null,
+    var contractAddress: String? = null,
+    var gasUsed: String? = null,
+    var confirmations: Long? = null,
+    var methodId: String? = null,
+    var functionName: String? = null,
+
+    // erc20 资产
+    var tokenName: String? = null,
+    var tokenSymbol: String? = null,
+    var tokenDecimal: Int = 0,
+    var tokenValue: String? = null,
+    // web3
+    var callbackId: Long = 0
+) : Parcelable
 
 @Entity
 @Parcelize

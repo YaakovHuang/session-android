@@ -31,7 +31,7 @@ import org.thoughtcrime.securesms.database.GroupDatabase
 import org.thoughtcrime.securesms.database.MmsSmsDatabase
 import org.thoughtcrime.securesms.database.RecipientDatabase
 import org.thoughtcrime.securesms.database.ThreadDatabase
-import org.thoughtcrime.securesms.home.web3.DAppWebActivity
+import org.thoughtcrime.securesms.wallet.web3.DAppWebActivity
 import org.thoughtcrime.securesms.util.StatusBarUtil
 import org.thoughtcrime.securesms.util.toastOnUi
 import org.thoughtcrime.securesms.wallet.WalletViewModel
@@ -190,11 +190,11 @@ class HomeActivity : PassphraseRequiredActionBarActivity() {
                 tvTitle?.setTextColor(getColorFromAttr(R.attr.reverseMainColor))
                 ivIcon?.imageTintList = ColorStateList.valueOf(getColorFromAttr(R.attr.reverseMainColor))
                 if (tab.position === 0) {
-                    StatusBarUtil.setStatusColor(this@HomeActivity, false, TextSecurePreferences.CLASSIC_DARK != getThemeStyle(this@HomeActivity), getColorFromAttr(R.attr.chatsToolbarColor))
+                    StatusBarUtil.setStatusColor(this@HomeActivity, false, TextSecurePreferences.CLASSIC_DARK != getThemeStyle(this@HomeActivity), getColorFromAttr(R.attr.commonToolbarColor))
                 } else if (tab.position === 2) {
                     StatusBarUtil.setStatusColor(this@HomeActivity, true, false, ContextCompat.getColor(this@HomeActivity, R.color.core_white))
                 } else {
-                    StatusBarUtil.setStatusColor(this@HomeActivity, false, TextSecurePreferences.CLASSIC_DARK != getThemeStyle(this@HomeActivity), getColorFromAttr(R.attr.chatsToolbarColor))
+                    StatusBarUtil.setStatusColor(this@HomeActivity, false, TextSecurePreferences.CLASSIC_DARK != getThemeStyle(this@HomeActivity), getColorFromAttr(R.attr.commonToolbarColor))
                 }
 
             }
@@ -224,7 +224,7 @@ class HomeActivity : PassphraseRequiredActionBarActivity() {
                 tvTitle?.visibility = View.GONE
                 tvTitle?.setTextColor(getColorFromAttr(R.attr.reverseMainColor))
                 ivIcon?.imageTintList =  ColorStateList.valueOf(getColorFromAttr(R.attr.reverseMainColor))
-                StatusBarUtil.setStatusColor(this, false, TextSecurePreferences.CLASSIC_DARK != getThemeStyle(this), getColorFromAttr(R.attr.chatsToolbarColor))
+                StatusBarUtil.setStatusColor(this, false, TextSecurePreferences.CLASSIC_DARK != getThemeStyle(this), getColorFromAttr(R.attr.commonToolbarColor))
             }
         }
         binding.tabLayout.getTabAt(0)?.select()

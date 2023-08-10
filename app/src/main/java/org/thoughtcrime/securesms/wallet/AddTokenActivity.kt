@@ -33,7 +33,7 @@ class AddTokenActivity : PassphraseRequiredActionBarActivity() {
         super.onCreate(savedInstanceState, ready)
         binding = ActivityAddTokenBinding.inflate(layoutInflater)
         setContentView(binding.root)
-        StatusBarUtil.setStatusColor(this, false, TextSecurePreferences.CLASSIC_DARK != TextSecurePreferences.getThemeStyle(this), getColorFromAttr(R.attr.chatsToolbarColor))
+        StatusBarUtil.setStatusColor(this, false, TextSecurePreferences.CLASSIC_DARK != TextSecurePreferences.getThemeStyle(this), getColorFromAttr(R.attr.commonToolbarColor))
         token = intent.parcelable(WalletActivity.KEY_TOKEN)
     }
 
@@ -49,11 +49,11 @@ class AddTokenActivity : PassphraseRequiredActionBarActivity() {
             } else {
                 getString(R.string.edit)
             }
-           token?.apply {
-               etContract.setText(contract)
-               etSymbol.setText(symbol)
-               etDecimal.setText(decimals)
-           }
+            token?.apply {
+                etContract.setText(contract)
+                etSymbol.setText(symbol)
+                etDecimal.setText(decimals)
+            }
             etContract.addTextChangedListener(object : TextWatcher {
                 override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {
 
@@ -85,7 +85,7 @@ class AddTokenActivity : PassphraseRequiredActionBarActivity() {
                     if (localToken != null) {
                         toastOnUi(R.string.currency_exist_error)
                     } else {
-                        var token = Token(key = account.key, chain_id = account.chain_id, name = symbol, symbol = symbol, icon = "", isNative = false, decimals = decimals.toInt(), sort = 0)
+                        var token = Token(key = account.key, chain_id = account.chain_id, name = symbol, symbol = symbol, contract = contract, icon = "", isNative = false, decimals = decimals.toInt(), sort = 0)
                         DaoHelper.insertToken(token)
                         EventBus.getDefault().post(TokenUpdateEvent(null))
                         finish()

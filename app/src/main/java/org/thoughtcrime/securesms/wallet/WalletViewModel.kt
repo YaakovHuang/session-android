@@ -14,11 +14,15 @@ import java.math.BigInteger
 
 class WalletViewModel(application: Application) : BaseViewModel(application) {
 
+    val tokenLiveData = MutableLiveData<Token>()
     val tokensLiveData = MutableLiveData<List<Token>>()
+    val txsLiveData = MutableLiveData<List<Transaction>?>()
     val symbolLiveData = MutableLiveData<String>()
     val decimalLiveData = MutableLiveData<String>()
     val saveStatusLiveData = MutableLiveData<Boolean>()
     var errorCode = MutableLiveData<Int>()
+
+    var pageNum = 1
 
     private val apiService by lazy {
         ApiService()
@@ -46,6 +50,42 @@ class WalletViewModel(application: Application) : BaseViewModel(application) {
         }
     }
 
+    fun loadBalance(
+        token: Token,
+        onStart: () -> Unit,
+        onFinally: () -> Unit
+    ) {
+        execute {
+            if (token.isNative) {
+                val ethResponse = WalletService.getBalance(
+                    wallet.address,
+                    token
+                )
+                token.balance = ethResponse.stripTrailingZeros().toPlainString()
+            } else {
+                val ethResponse = WalletService.ethCall(
+                    token.chain_id,
+                    wallet.address,
+                    token.contract,
+                    FunctionUtils.encodeBalanceOf(wallet.address)
+                )
+                token.balance =
+                    (ethResponse.values[0] as BigInteger).toBigDecimal().stripTrailingZeros()
+                        .toPlainString()
+            }
+            Logger.d("${token.symbol} = ${token.balance}")
+            token
+        }.onStart {
+            onStart.invoke()
+        }.onSuccess {
+            tokenLiveData.postValue(it)
+        }.onError {
+            Logger.e(it.message)
+        }.onFinally {
+            onFinally.invoke()
+        }
+    }
+
     fun loadTokens() {
         execute {
             DaoHelper.loadTokens()
@@ -53,6 +93,22 @@ class WalletViewModel(application: Application) : BaseViewModel(application) {
             tokensLiveData.postValue(it)
         }.onError {
             Logger.e(it.message)
+        }
+    }
+
+    fun loadTxs(
+        token: Token
+    ) {
+        execute {
+            val txs = apiService.loadTransactions(wallet.address, token, pageNum)
+            txs?.forEach {
+                it.key = token.key.toString()
+            }
+            if (pageNum == 1) organizeData(txs, token) else txsLiveData.postValue(txs)
+        }.onError {
+            Logger.e(it.message)
+            if (pageNum == 1) organizeData(null, token) else txsLiveData.postValue(null)
+
         }
     }
 
@@ -94,7 +150,7 @@ class WalletViewModel(application: Application) : BaseViewModel(application) {
             }
             val localRpcs = AppDataBase.getInstance().rpcDao().loadRpcs(false)
             val isDelete = TextSecurePreferences.getDeleteRPC(context)
-            if (isDelete == false) {
+            if (!isDelete) {
                 AppDataBase.getInstance().rpcDao().deleteAllRpcs()
                 TextSecurePreferences.setDeleteRPC(context, true)
             }
@@ -130,6 +186,34 @@ class WalletViewModel(application: Application) : BaseViewModel(application) {
             }
         }
         return false
+    }
+
+    private fun organizeData(txs: List<Transaction>?, token: Token) {
+        var oldTxs = DaoHelper.loadTxs(wallet.address, token.chain_id, token.isNative)
+        var currentTime = System.currentTimeMillis() / 1000
+        var availableTxs = mutableListOf<Transaction>()
+        for (tx in oldTxs) {
+            if (currentTime - tx.timeStamp > 60 * 60 * 24) {
+                DaoHelper.deleteTx(tx)
+                continue
+            }
+            availableTxs.add(tx)
+        }
+        if (txs.isNullOrEmpty()) {
+            txsLiveData.postValue(availableTxs)
+            return
+        }
+        txs.forEach {
+            for (tx in oldTxs) {
+                if (it.hash == tx.hash) {
+                    DaoHelper.deleteTx(tx)
+                    availableTxs.remove(tx)
+                    break
+                }
+            }
+        }
+        availableTxs.addAll(txs)
+        txsLiveData.postValue(availableTxs)
     }
 
 

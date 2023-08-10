@@ -416,7 +416,7 @@
         <item name="settingBgColor">@color/core_black</item>
         <item name="settingCardColor">@color/classic_dark_1</item>
         <item name="secondTextColor">@color/color91979D</item>
-        <item name="chatsToolbarColor">@color/core_black</item>
+        <item name="commonToolbarColor">@color/core_black</item>
         <item name="inputBgColor">@color/color272727</item>
         <item name="iconTintColor">@color/classic_dark_6</item>
         <item name="iconTintBlueColor">@color/color3E66FB</item>
@@ -432,6 +432,8 @@
         <item name="walletTextColor">@color/color616569</item>
         <item name="followBgColor">@color/color7A7B7D</item>
         <item name="editBgColor">@color/color272727</item>
+        <item name="addressBgColor">@color/color272727</item>
+        <item name="addressBgColor1">#0CFFFFFF</item>
     </style>
 
     <style name="Classic.Light">
@@ -524,7 +526,7 @@
         <item name="settingBgColor">@color/colorE3E5E7</item>
         <item name="settingCardColor">@color/core_white</item>
         <item name="secondTextColor">@color/color505050</item>
-        <item name="chatsToolbarColor">@color/colorF9FAFA</item>
+        <item name="commonToolbarColor">@color/colorF9FAFA</item>
         <item name="inputBgColor">@color/core_white</item>
         <item name="iconTintColor">@color/classic_light_0</item>
         <item name="iconTintBlueColor">@color/color3E66FB</item>
@@ -540,6 +542,8 @@
         <item name="walletTextColor">@color/core_white</item>
         <item name="followBgColor">@color/color3E66FB</item>
         <item name="editBgColor">@color/colorF9FAFA</item>
+        <item name="addressBgColor">@color/colorFAFAFA</item>
+        <item name="addressBgColor1">@color/colorF2F2F2</item>
     </style>
 
     <style name="Ocean.Dark">

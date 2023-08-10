@@ -24,6 +24,7 @@ import org.web3j.protocol.core.DefaultBlockParameterName
 import org.web3j.protocol.core.Response
 import org.web3j.protocol.core.methods.request.Transaction
 import org.web3j.utils.Numeric
+import java.math.BigDecimal
 
 /**
  * Created by Yaakov on
@@ -127,6 +128,23 @@ object WalletService {
                 transactionHash = "",
                 values = ethCall.parseValues(function.outputParameters),
             )
+        }
+    }
+
+    fun getBalance(
+        address: String,
+        token: Token
+    ): BigDecimal {
+        return try {
+            val ethCall = loadClient(token.chain_id).ethGetBalance(address, DefaultBlockParameterName.LATEST).send()
+            if (ethCall.hasError()) {
+                Logger.e("${ethCall.error.code}: ${ethCall.error.message}")
+                BigDecimal.ZERO
+            } else {
+                BigDecimal(ethCall.balance)
+            }
+        } catch (e: Exception) {
+            BigDecimal.ZERO
         }
     }
 }

@@ -1,4 +1,4 @@
-package org.thoughtcrime.securesms.home.web3
+package org.thoughtcrime.securesms.wallet.web3
 
 enum class DAppMethod {
     SIGNTRANSACTION,

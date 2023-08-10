@@ -1,8 +1,9 @@
-package org.thoughtcrime.securesms.home.web3
+package org.thoughtcrime.securesms.wallet.web3
 
-import org.thoughtcrime.securesms.wallet.Wallet
 import org.thoughtcrime.securesms.util.KeyStoreUtils
 import org.thoughtcrime.securesms.util.Logger
+import org.thoughtcrime.securesms.wallet.Transaction
+import org.thoughtcrime.securesms.wallet.Wallet
 import org.web3j.abi.FunctionReturnDecoder
 import org.web3j.abi.TypeReference
 import org.web3j.abi.datatypes.Type

@@ -9,6 +9,8 @@ import org.thoughtcrime.securesms.et.Nonce
 import org.thoughtcrime.securesms.et.User
 import org.thoughtcrime.securesms.et.UserInfo
 import org.thoughtcrime.securesms.wallet.AppConfig
+import org.thoughtcrime.securesms.wallet.Token
+import org.thoughtcrime.securesms.wallet.Transaction
 
 /**
  * Created by Yaakov on
@@ -90,5 +92,40 @@ class ApiService {
 
     suspend fun loadConfig(deviceId: String, model: String, source: String): AppConfig? {
         return api.loadConfig(deviceId, model, source).data
+    }
+
+    suspend fun loadTransactions(address: String, token: Token, page: Int): List<Transaction>? {
+        val txs = if (token.isNative) {
+            when (token.chain_id) {
+                AppConst.CHAIN_IDS.ETH -> api.loadEthNormalTransactions(address, AppConst.API_KEY.ETHSCAN, page, 10).result
+                AppConst.CHAIN_IDS.OP -> api.loadOpNormalTransactions(address, AppConst.API_KEY.OPSCAN, page, 10).result
+                AppConst.CHAIN_IDS.BSC -> api.loadBscNormalTransactions(address, AppConst.API_KEY.BSCSCAN, page, 10).result
+                AppConst.CHAIN_IDS.MATIC -> api.loadMaticNormalTransactions(address, AppConst.API_KEY.MATICSCAN, page, 10).result
+                AppConst.CHAIN_IDS.ARB -> api.loadArbNormalTransactions(address, AppConst.API_KEY.ARBSCAN, page, 10).result
+                else -> api.loadEthNormalTransactions(address, AppConst.API_KEY.ETHSCAN, page, 10).result
+            }
+        } else {
+            when (token.chain_id) {
+                AppConst.CHAIN_IDS.ETH -> api.loadErc20Transactions(address, token.contract, AppConst.API_KEY.ETHSCAN, page, 10).result
+                AppConst.CHAIN_IDS.OP -> api.loadOpErc20Transactions(address, token.contract, AppConst.API_KEY.ETHSCAN, page, 10).result
+                AppConst.CHAIN_IDS.BSC -> api.loadBscErc20Transactions(address, token.contract, AppConst.API_KEY.ETHSCAN, page, 10).result
+                AppConst.CHAIN_IDS.MATIC -> api.loadMaticErc20Transactions(address, token.contract, AppConst.API_KEY.ETHSCAN, page, 10).result
+                AppConst.CHAIN_IDS.ARB -> api.loadErc20Transactions(address, token.contract, AppConst.API_KEY.ETHSCAN, page, 10).result
+                else -> api.loadErc20Transactions(address, token.contract, AppConst.API_KEY.ETHSCAN, page, 10).result
+            }
+        }.let {
+            for (tx in it) {
+                if (token.isNative) {
+                    tx.tokenName = token.name
+                    tx.tokenSymbol = token.symbol
+                    tx.tokenDecimal = token.decimals
+                }
+                tx.showDecimals = AppConst.SHOW_DECIMAL
+                tx.isNative = token.isNative
+                tx.chainId = token.chain_id
+            }
+            it
+        }
+        return txs
     }
 }

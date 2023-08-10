@@ -1,15 +1,9 @@
 package org.thoughtcrime.securesms.wallet
 
-import android.content.Intent
 import android.os.Bundle
-import android.view.LayoutInflater
-import android.view.ViewGroup
 import androidx.activity.viewModels
-import androidx.recyclerview.widget.LinearLayoutManager
-import com.lxj.xpopup.XPopup
 import network.qki.messenger.R
-import network.qki.messenger.databinding.ActivityTokenInfoBinding
-import network.qki.messenger.databinding.LayoutStatelayoutEmptyBinding
+import network.qki.messenger.databinding.ActivitySendBinding
 import network.qki.messenger.databinding.LayoutTokenInfoHeaderBinding
 import org.session.libsession.utilities.TextSecurePreferences
 import org.session.libsession.utilities.getColorFromAttr
@@ -18,14 +12,13 @@ import org.thoughtcrime.securesms.constants.AppConst
 import org.thoughtcrime.securesms.util.EthereumUtil
 import org.thoughtcrime.securesms.util.GlideHelper
 import org.thoughtcrime.securesms.util.StatusBarUtil
+import org.thoughtcrime.securesms.util.formatAddress
 import org.thoughtcrime.securesms.util.parcelable
-import org.thoughtcrime.securesms.util.show
 import java.math.BigDecimal
 
-class TokenInfoActivity : PassphraseRequiredActionBarActivity() {
+class SendActivity : PassphraseRequiredActionBarActivity() {
 
-    private lateinit var binding: ActivityTokenInfoBinding
-    private lateinit var headerBinding: LayoutTokenInfoHeaderBinding
+    private lateinit var binding: ActivitySendBinding
 
     private val viewModel by viewModels<WalletViewModel>()
     private var token: Token? = null
@@ -35,7 +28,7 @@ class TokenInfoActivity : PassphraseRequiredActionBarActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?, ready: Boolean) {
         super.onCreate(savedInstanceState, ready)
-        binding = ActivityTokenInfoBinding.inflate(layoutInflater)
+        binding = ActivitySendBinding.inflate(layoutInflater)
         setContentView(binding.root)
         StatusBarUtil.setStatusColor(this, false, TextSecurePreferences.CLASSIC_DARK != TextSecurePreferences.getThemeStyle(this), getColorFromAttr(R.attr.commonToolbarColor))
         token = intent.parcelable(WalletActivity.KEY_TOKEN)
@@ -51,42 +44,15 @@ class TokenInfoActivity : PassphraseRequiredActionBarActivity() {
         actionBar.setDisplayHomeAsUpEnabled(true)
         actionBar.setHomeButtonEnabled(true)
         with(binding) {
-            tvAppName.text = token?.symbol
+            tvAppName.text = getString(R.string.transfer)
+            tvOk.isEnabled = false
+            tvSymbol.text = token!!.symbol
+            tvAddress.text = token!!.contract.formatAddress()
             swipeRefreshLayout.setOnRefreshListener {
                 viewModel.pageNum = 1
                 initData()
             }
-            recyclerView.layoutManager = LinearLayoutManager(this@TokenInfoActivity)
-            recyclerView.adapter = adapter
-            adapter.loadMoreModule.setOnLoadMoreListener {
-                viewModel.loadTxs(token!!)
-            }
-            adapter.loadMoreModule.isAutoLoadMore = true
-            adapter.loadMoreModule.isEnableLoadMoreIfNotFullPage = false
-            adapter.setOnItemClickListener { adapter, _, position ->
-                val tx = adapter.data[position] as Transaction
-//                val intent = Intent(context, ETDetailActivity::class.java)
-//                intent.putExtra(ETFragment.KEY_ET, et)
-//                show(intent)
-            }
-            initHeader()
-            // empty
-            val emptyViewBinding = LayoutStatelayoutEmptyBinding.inflate(LayoutInflater.from(this@TokenInfoActivity), root, false)
-            adapter.setEmptyView(emptyViewBinding.root)
-            val layoutParams: ViewGroup.LayoutParams = emptyViewBinding.root.layoutParams
-            layoutParams.height = binding.recyclerView.height - headerBinding.root.height
-            adapter.addChildClickViewIds(R.id.llFavorite, R.id.llForward, R.id.ivMore)
-            adapter.setOnItemChildClickListener { adapter, v, position -> }
-            tvTransfer.setOnClickListener {
-                val intent = Intent(this@TokenInfoActivity, SendActivity::class.java)
-                intent.putExtra(WalletActivity.KEY_TOKEN, token)
-                show(intent)
-            }
-            tvReceive.setOnClickListener {
-                XPopup.Builder(this@TokenInfoActivity)
-                    .asCustom(ReceivePopupView(this@TokenInfoActivity, token!!))
-                    .show()
-            }
+
         }
     }
 
@@ -108,7 +74,7 @@ class TokenInfoActivity : PassphraseRequiredActionBarActivity() {
         viewModel.tokenLiveData.observe(this) {
             stopRefreshing(binding.swipeRefreshLayout)
             token = it
-            updateUI(headerBinding)
+
         }
         viewModel.txsLiveData.observe(this) {
             stopRefreshing(binding.swipeRefreshLayout)
@@ -128,14 +94,6 @@ class TokenInfoActivity : PassphraseRequiredActionBarActivity() {
         }
     }
 
-    private fun initHeader() {
-        adapter.headerWithEmptyEnable = true
-        headerBinding = LayoutTokenInfoHeaderBinding.inflate(
-            LayoutInflater.from(this@TokenInfoActivity), null, false
-        )
-        adapter.addHeaderView(headerBinding.root)
-        updateUI(headerBinding)
-    }
 
     private fun updateUI(binding: LayoutTokenInfoHeaderBinding) {
         with(binding) {

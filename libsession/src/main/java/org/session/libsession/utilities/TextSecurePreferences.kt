@@ -298,10 +298,10 @@ interface TextSecurePreferences {
         const val PREF_SEED_SITE = "pref_seed_site"
         const val PREF_PROXY_HTTPS = "pref_proxy_https"
         const val PREF_PROXY_SOCKS5 = "pref_proxy_socks5"
-        const val KEY_IMPORT_BY_PK = "import_by_pk"
         const val KEY_X_TOKEN = "x_token"
         const val KEY_USER = "user"
         const val KEY_RPC_IS_DELETE = "rpc_delete"
+        const val KEY_IS_HIDE = "is_hide"
 
         @JvmStatic
         fun setCustomizedNodeSite(context: Context, site: String) {
@@ -1151,8 +1151,18 @@ interface TextSecurePreferences {
         }
 
         @JvmStatic
-        fun getDeleteRPC(context: Context): Boolean? {
+        fun getDeleteRPC(context: Context): Boolean {
             return getBooleanPreference(context, KEY_RPC_IS_DELETE, false)
+        }
+
+        @JvmStatic
+        fun setHide(context: Context, hide: Boolean) {
+            setBooleanPreference(context, KEY_IS_HIDE, hide)
+        }
+
+        @JvmStatic
+        fun isHide(context: Context): Boolean {
+            return getBooleanPreference(context, KEY_IS_HIDE, false)
         }
     }
 }

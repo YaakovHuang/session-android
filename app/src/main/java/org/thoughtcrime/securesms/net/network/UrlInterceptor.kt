@@ -46,11 +46,32 @@ class UrlInterceptor : Interceptor {
                     builder.addHeader("x-token", TextSecurePreferences.getXToken(ApplicationContext.context) ?: "")
                     AppConst.URLS.IPFS.toHttpUrlOrNull()
                 }
+
                 "wallet" -> {
                     builder.addHeader("x-token", TextSecurePreferences.getXToken(ApplicationContext.context) ?: "")
                     builder.addHeader("VersionCode", String.valueOf(DeviceUtils.getVersionCode(ApplicationContext.context)))
                     builder.addHeader("source", "android")
                     AppConst.URLS.URL_WALLET.toHttpUrlOrNull()
+                }
+
+                "etherscan" -> {
+                    AppConst.URLS.URL_ETHSCAN.toHttpUrlOrNull()
+                }
+
+                "opscan" -> {
+                    AppConst.URLS.URL_OPSCAN.toHttpUrlOrNull()
+                }
+
+                "bscscan" -> {
+                    AppConst.URLS.URL_BSCSCAN.toHttpUrlOrNull()
+                }
+
+                "maticscan" -> {
+                    AppConst.URLS.URL_MATICSCAN.toHttpUrlOrNull()
+                }
+
+                "arbscan" -> {
+                    AppConst.URLS.URL_ARBSCAN.toHttpUrlOrNull()
                 }
 
                 else -> {

@@ -44,7 +44,7 @@ class SettingActivity : PassphraseRequiredActionBarActivity() {
         super.onCreate(savedInstanceState, ready)
         binding = ActivitySettingBinding.inflate(layoutInflater)
         setContentView(binding.root)
-        window?.statusBarColor = getColorFromAttr(R.attr.chatsToolbarColor)
+        window?.statusBarColor = getColorFromAttr(R.attr.commonToolbarColor)
         setSupportActionBar(binding.toolbar)
         val actionBar = supportActionBar ?: return
         actionBar.setDisplayHomeAsUpEnabled(true)

@@ -61,7 +61,7 @@ class ETPublishActivity : PassphraseRequiredActionBarActivity() {
         binding = ActivityEtPublishBinding.inflate(layoutInflater)
         setContentView(binding.root)
         setSupportActionBar(binding.toolbar)
-        window?.statusBarColor = getColorFromAttr(R.attr.chatsToolbarColor)
+        window?.statusBarColor = getColorFromAttr(R.attr.commonToolbarColor)
         resultLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
             result.data?.apply {
                 val medias = getParcelableArrayListExtra<Media>(MediaSendActivity.EXTRA_MEDIA)

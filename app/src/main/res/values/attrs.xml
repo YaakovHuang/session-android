@@ -395,7 +395,7 @@
     <attr name="settingBgColor" format="reference|color" />
     <attr name="settingCardColor" format="reference|color" />
     <attr name="secondTextColor" format="reference|color" />
-    <attr name="chatsToolbarColor" format="reference|color" />
+    <attr name="commonToolbarColor" format="reference|color" />
     <attr name="inputBgColor" format="reference|color" />
     <attr name="iconTintColor" format="reference|color" />
     <attr name="iconTintBlueColor" format="reference|color" />
@@ -411,5 +411,7 @@
     <attr name="walletTextColor" format="reference|color" />
     <attr name="followBgColor" format="reference|color" />
     <attr name="editBgColor" format="reference|color" />
+    <attr name="addressBgColor" format="reference|color" />
+    <attr name="addressBgColor1" format="reference|color" />
 
 </resources>
