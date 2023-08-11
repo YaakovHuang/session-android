@@ -413,5 +413,6 @@
     <attr name="editBgColor" format="reference|color" />
     <attr name="addressBgColor" format="reference|color" />
     <attr name="addressBgColor1" format="reference|color" />
+    <attr name="hintTextColor" format="reference|color" />
 
 </resources>

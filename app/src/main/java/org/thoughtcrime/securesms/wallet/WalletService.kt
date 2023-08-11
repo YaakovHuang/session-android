@@ -19,12 +19,15 @@ import org.web3j.crypto.Bip32ECKeyPair.HARDENED_BIT
 import org.web3j.crypto.Credentials
 import org.web3j.crypto.Keys
 import org.web3j.crypto.MnemonicUtils
+import org.web3j.crypto.RawTransaction
+import org.web3j.crypto.TransactionEncoder
 import org.web3j.protocol.Web3j
 import org.web3j.protocol.core.DefaultBlockParameterName
 import org.web3j.protocol.core.Response
 import org.web3j.protocol.core.methods.request.Transaction
 import org.web3j.utils.Numeric
 import java.math.BigDecimal
+import java.math.BigInteger
 
 /**
  * Created by Yaakov on
@@ -36,11 +39,7 @@ object WalletService {
         // init wallet
         val mnemonic = MnemonicUtils.generateMnemonic(Hex.decode(seed))
         val path = intArrayOf(
-            44 or HARDENED_BIT,
-            60 or HARDENED_BIT,
-            0 or HARDENED_BIT,
-            0,
-            0
+            44 or HARDENED_BIT, 60 or HARDENED_BIT, 0 or HARDENED_BIT, 0, 0
         )
         val seed = MnemonicUtils.generateSeed(mnemonic, "")
         val masterKeyPair = Bip32ECKeyPair.generateKeyPair(seed)
@@ -57,7 +56,7 @@ object WalletService {
             var account = Account(key = wallet.key, chain_id = chain.chain_id, address = wallet.address, pk = wallet.pk, isSelect = index == 0)
             AppDataBase.getInstance().accountDao().insert(account)
             // init token
-            var token = Token(key = wallet.key, chain_id = chain.chain_id, name = chain.name, symbol = chain.chain_symbol, icon = chain.icon, isNative = true, decimals = 18, sort = 999)
+            var token = Token(key = wallet.key!!, chain_id = chain.chain_id, name = chain.currency ?: "", symbol = chain.currency ?: "", icon = chain.icon ?: "", token_type = chain.token_type ?: "", isNative = true, decimals = 18, sort = 999)
             AppDataBase.getInstance().tokenDao().insert(token)
         }
 
@@ -68,11 +67,7 @@ object WalletService {
             // init wallet
             val mnemonic = MnemonicUtils.generateMnemonic(Hex.decode(seed))
             val path = intArrayOf(
-                44 or HARDENED_BIT,
-                60 or HARDENED_BIT,
-                0 or HARDENED_BIT,
-                0,
-                0
+                44 or HARDENED_BIT, 60 or HARDENED_BIT, 0 or HARDENED_BIT, 0, 0
             )
             val seed = MnemonicUtils.generateSeed(mnemonic, "")
             val masterKeyPair = Bip32ECKeyPair.generateKeyPair(Hex.decode(seed))
@@ -89,7 +84,7 @@ object WalletService {
                 var account = Account(key = wallet.key, chain_id = chain.chain_id, address = wallet.address, pk = wallet.pk, isSelect = index == 0)
                 AppDataBase.getInstance().accountDao().insert(account)
                 // init token
-                var token = Token(key = wallet.key, chain_id = chain.chain_id, name = chain.name, symbol = chain.chain_symbol, icon = chain.icon, isNative = true, decimals = 18, sort = 999)
+                var token = Token(key = wallet.key!!, chain_id = chain.chain_id, name = chain.currency ?: "", symbol = chain.currency ?: "", icon = chain.icon ?: "", token_type = chain.token_type ?: "", isNative = true, decimals = 18, sort = 999)
                 AppDataBase.getInstance().tokenDao().insert(token)
             }
         }.timeout(20000)
@@ -120,8 +115,7 @@ object WalletService {
         return if (ethCall.hasError()) {
             Logger.e(Exception("${ethCall.error.code}: ${ethCall.error.message}"))
             EthResponse(
-                transactionHash = "",
-                values = listOf(0)
+                transactionHash = "", values = listOf(0)
             )
         } else {
             EthResponse(
@@ -132,8 +126,7 @@ object WalletService {
     }
 
     fun getBalance(
-        address: String,
-        token: Token
+        address: String, token: Token
     ): BigDecimal {
         return try {
             val ethCall = loadClient(token.chain_id).ethGetBalance(address, DefaultBlockParameterName.LATEST).send()
@@ -146,6 +139,69 @@ object WalletService {
         } catch (e: Exception) {
             BigDecimal.ZERO
         }
+    }
+
+    fun loadGas(chainId: Int): BigInteger {
+        val response = loadClient(chainId).ethGasPrice().send()
+        if (response.hasError()) {
+            Logger.e("${response.error.code}: ${response.error.message}")
+            return BigInteger.ZERO
+        }
+        return response.gasPrice
+    }
+
+    fun loadEstimateGas(
+        tx: org.thoughtcrime.securesms.wallet.Transaction
+    ): BigInteger {
+        if (tx.isNative) {
+            return BigInteger.valueOf(21000)
+        } else {
+            val transaction = Transaction(
+                tx.from, BigInteger.ZERO, BigInteger.ZERO, BigInteger.ZERO, tx.contractAddress, BigInteger.ZERO, tx.data
+            )
+            val send = loadClient(tx.chainId).ethEstimateGas(transaction).send()
+            return if (send.hasError()) {
+                Logger.e("${send.error.code}: ${send.error.message}")
+                BigInteger.ZERO
+            } else {
+                BigDecimal(send.amountUsed).multiply(BigDecimal(1.5)).toBigInteger()
+            }
+        }
+    }
+
+    fun sendTx(
+        wallet: Wallet, tx: org.thoughtcrime.securesms.wallet.Transaction
+    ): org.thoughtcrime.securesms.wallet.Transaction {
+        val nonce = loadClient(tx.chainId).ethGetTransactionCount(tx.from, DefaultBlockParameterName.LATEST).send().transactionCount
+        if (Numeric.toBigInt(tx.to) == BigInteger.ZERO) {
+            tx.to = ""
+        }
+        if (tx.data.isNullOrBlank()) {
+            tx.data = ""
+        }
+        val rawTx = RawTransaction.createTransaction(
+            nonce, BigInteger(tx.gasPrice), BigInteger(tx.gas), if (tx.contractAddress.isNullOrBlank()) {
+                tx.to
+            } else {
+                tx.contractAddress
+            }, BigInteger(tx.value), tx.data
+        )
+        val signMessage: ByteArray = TransactionEncoder.signMessage(
+            rawTx, tx.chainId.toLong(), Credentials.create(KeyStoreUtils.decrypt(wallet.pk))
+        )
+        val send = loadClient(tx.chainId).ethSendRawTransaction(Numeric.toHexString(signMessage)).send()
+        if (send.hasError()) {
+            tx.isError = 1
+            tx.timeStamp = System.currentTimeMillis() / 1000
+            Logger.e(send.error.message)
+        } else {
+            tx.txreceipt_status = 0
+            tx.isError = 0
+            tx.hash = send.transactionHash
+            tx.timeStamp = System.currentTimeMillis() / 1000
+            DaoHelper.insertTx(tx)
+        }
+        return tx
     }
 }
 

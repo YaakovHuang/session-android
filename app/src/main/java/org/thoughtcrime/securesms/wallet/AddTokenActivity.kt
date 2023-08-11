@@ -85,7 +85,8 @@ class AddTokenActivity : PassphraseRequiredActionBarActivity() {
                     if (localToken != null) {
                         toastOnUi(R.string.currency_exist_error)
                     } else {
-                        var token = Token(key = account.key, chain_id = account.chain_id, name = symbol, symbol = symbol, contract = contract, icon = "", isNative = false, decimals = decimals.toInt(), sort = 0)
+                        var chain = DaoHelper.loadSelectChain()
+                        var token = Token(key = account.key, chain_id = account.chain_id, name = symbol, symbol = symbol, contract = contract, icon = "", token_type = chain.token_type ?: "", isNative = false, decimals = decimals.toInt(), sort = 0)
                         DaoHelper.insertToken(token)
                         EventBus.getDefault().post(TokenUpdateEvent(null))
                         finish()

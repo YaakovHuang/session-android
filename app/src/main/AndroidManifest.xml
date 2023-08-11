@@ -297,6 +297,13 @@
             android:theme="@style/Theme.Session.DayNight.NoActionBar" />
 
         <activity
+            android:name="org.thoughtcrime.securesms.wallet.qrcode.QrCodeActivity"
+            android:label=""
+            android:launchMode="singleTask"
+            android:screenOrientation="portrait"
+            android:theme="@style/Theme.Session.DayNight.NoActionBar" />
+
+        <activity
             android:name="org.thoughtcrime.securesms.et.ETUserCenterActivity"
             android:label=""
             android:screenOrientation="portrait"

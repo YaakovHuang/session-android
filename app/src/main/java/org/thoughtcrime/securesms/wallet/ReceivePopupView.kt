@@ -30,7 +30,7 @@ class ReceivePopupView(
         binding = LayoutPopupReceiveBinding.bind(popupImplView)
         binding.apply {
             val account = DaoHelper.loadSelectAccount()
-            tvSymbol.text = "${token.symbol} (${token.network})"
+            tvSymbol.text = "${token.symbol} (${token.token_type})"
             val size = toPx(120, resources)
             val qrCode = QRCodeUtilities.encode(account.address!!, size, isInverted = false, hasTransparentBackground = false)
             ivQR.setImageBitmap(qrCode)

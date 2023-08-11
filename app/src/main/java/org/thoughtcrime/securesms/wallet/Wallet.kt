@@ -15,11 +15,11 @@ import kotlinx.parcelize.Parcelize
 data class Wallet(
     @PrimaryKey(autoGenerate = true)
     var id: Int = 0,
-    var key: String?,
-    var mnemonic: String? = null,
-    var pk: String? = null,
-    var address: String,
-    var pwd: String?
+    var key: String = "",
+    var mnemonic: String = "",
+    var pk: String = "",
+    var address: String = "",
+    var pwd: String = ""
 ) : Parcelable
 
 @Entity
@@ -27,10 +27,10 @@ data class Wallet(
 data class Account(
     @PrimaryKey(autoGenerate = true)
     var id: Int = 0,
-    var key: String? = "",
+    var key: String = "",
     var chain_id: Int = 1,
-    var address: String? = "",
-    var pk: String? = "",
+    var address: String = "",
+    var pk: String = "",
     var isSelect: Boolean = false,
     var sort: Int = 0,
     // u本位总价值
@@ -42,13 +42,14 @@ data class Account(
 data class Token(
     @PrimaryKey(autoGenerate = true)
     var id: Int = 0,
-    var key: String?,
+    var key: String,
     var network: String = "",
     var chain_id: Int = 0,
-    var name: String?,
-    var symbol: String?,
+    var name: String = "",
+    var symbol: String = "",
     var contract: String = "",
-    var icon: String?,
+    var icon: String = "",
+    var token_type: String = "",
     var price: String = "0",
     var isNative: Boolean = false,
     var decimals: Int = 0,
@@ -66,7 +67,7 @@ data class AppConfig(
 
 @Parcelize
 data class Config(
-    var website: String?,
+    var website: String = "",
 ) : Parcelable
 
 @Entity
@@ -75,8 +76,7 @@ data class Chain(
     @PrimaryKey(autoGenerate = true)
     var id: Int = 0,
     var chain_id: Int,
-    var name: String?,
-    var chain_name: String?,
+    var chain_name: String? = "",
     var chain_symbol: String?,
     var browser: String?,
     var token_type: String?,

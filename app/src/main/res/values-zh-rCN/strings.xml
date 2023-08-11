@@ -1083,5 +1083,27 @@
     <string name="receiver">接收地址</string>
     <string name="amount">数量</string>
     <string name="all">全部</string>
-
+    <string name="address_incorrect">地址不正确</string>
+    <string name="scan_qr_code">扫描二维码</string>
+    <string name="gallery">图库</string>
+    <string name="select_token">选择币种</string>
+    <string name="please_fill_in_correct_amount">请填写正确金额！</string>
+    <string name="balance_unenough">%s余额不足</string>
+    <string name="transfer_info">支付信息</string>
+    <string name="receive_address">接受地址</string>
+    <string name="gas_fee">矿工费</string>
+    <string name="transaction_detail">交易详情</string>
+    <string name="transfer_2">交易</string>
+    <string name="input_wallet_password">请输入钱包密码</string>
+    <string name="password_error">密码错误</string>
+    <string name="send_success">发送成功</string>
+    <string name="send_failed">发送失败</string>
+    <string name="password">密码</string>
+    <string name="wait_tx_confirm">等待交易确认</string>
+    <string name="view_in_browser">去浏览器中查看</string>
+    <string name="hint_input_wallet_password">请输入密码</string>
+    <string name="hint_input_wallet_password_too">再次输入密码</string>
+    <string name="confirm_password">确认密码</string>
+    <string name="tip_password">请设置密码，以方便交易操作。</string>
+    <string name="tip_password_1">该密码仅用于应用内部验证操作。</string>
 </resources>

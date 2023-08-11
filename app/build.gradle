@@ -153,7 +153,9 @@ dependencies {
 
     implementation("androidx.room:room-runtime:2.4.3")
     kapt("androidx.room:room-compiler:2.4.3")
-    implementation "androidx.lifecycle:lifecycle-viewmodel-ktx:2.2.0"
+
+    implementation('com.github.jenly1314:zxing-lite:2.2.1')
+    implementation('com.github.android:renderscript-intrinsics-replacement-toolkit:b6363490c3')
 
     testImplementation "junit:junit:$junitVersion"
     testImplementation 'org.assertj:assertj-core:3.11.1'

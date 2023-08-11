@@ -175,7 +175,7 @@ class ETFragment : BaseFragment<ETViewModel>(R.layout.fragment_et) {
         }, {
 //            isFirst = false
 //            hideLoading()
-            stopRefreshing(binding.swipeRefreshLayout)
+//            stopRefreshing(binding.swipeRefreshLayout)
         })
     }
 
@@ -187,7 +187,7 @@ class ETFragment : BaseFragment<ETViewModel>(R.layout.fragment_et) {
         }, {
 //            isFirst = false
 //            hideLoading()
-            stopRefreshing(binding.swipeRefreshLayout)
+//            stopRefreshing(binding.swipeRefreshLayout)
         })
     }
 

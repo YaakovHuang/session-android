@@ -34,6 +34,10 @@ object DaoHelper {
         return AppDataBase.getInstance().tokenDao().loadToken(contract)
     }
 
+    fun loadToken(chainId: Int, isNative: Boolean): Token {
+        return AppDataBase.getInstance().tokenDao().loadToken(chainId, isNative)
+    }
+
     fun insertToken(token: Token) {
         return AppDataBase.getInstance().tokenDao().insert(token)
     }

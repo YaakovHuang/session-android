@@ -1101,4 +1101,27 @@
     <string name="receiver">Receiver</string>
     <string name="amount">Amount</string>
     <string name="all">All</string>
+    <string name="address_incorrect">incorrect address</string>
+    <string name="scan_qr_code">Scan QR code</string>
+    <string name="gallery">Gallery</string>
+    <string name="select_token">select</string>
+    <string name="please_fill_in_correct_amount">incorrect amount!</string>
+    <string name="balance_unenough">%s balance is not enough!</string>
+    <string name="transfer_info">Details</string>
+    <string name="receive_address">Receive address</string>
+    <string name="gas_fee">Gas</string>
+    <string name="transaction_detail">Txn details</string>
+    <string name="transfer_2">Txn</string>
+    <string name="input_wallet_password">Password</string>
+    <string name="password_error">Password error</string>
+    <string name="send_success">Success</string>
+    <string name="send_failed">Fail</string>
+    <string name="password">Password</string>
+    <string name="wait_tx_confirm">processing</string>
+    <string name="view_in_browser">View in browser</string>
+    <string name="hint_input_wallet_password">Password</string>
+    <string name="hint_input_wallet_password_too">Confirm password</string>
+    <string name="confirm_password">Confirm password</string>
+    <string name="tip_password">please set a password to facilitate transaction operations.</string>
+    <string name="tip_password_1">The password is only used for intra application verification operations.</string>
 </resources>

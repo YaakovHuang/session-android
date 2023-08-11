@@ -2,14 +2,19 @@ package org.thoughtcrime.securesms.wallet
 
 import android.app.Application
 import androidx.lifecycle.MutableLiveData
+import network.qki.messenger.R
 import org.session.libsession.utilities.TextSecurePreferences
 import org.thoughtcrime.securesms.BaseViewModel
 import org.thoughtcrime.securesms.database.room.AppDataBase
 import org.thoughtcrime.securesms.database.room.DaoHelper
 import org.thoughtcrime.securesms.net.network.ApiService
 import org.thoughtcrime.securesms.util.DeviceUtils
+import org.thoughtcrime.securesms.util.EthereumUtil
 import org.thoughtcrime.securesms.util.FunctionUtils
 import org.thoughtcrime.securesms.util.Logger
+import org.thoughtcrime.securesms.util.toastOnUi
+import org.web3j.abi.FunctionEncoder
+import java.math.BigDecimal
 import java.math.BigInteger
 
 class WalletViewModel(application: Application) : BaseViewModel(application) {
@@ -19,6 +24,8 @@ class WalletViewModel(application: Application) : BaseViewModel(application) {
     val txsLiveData = MutableLiveData<List<Transaction>?>()
     val symbolLiveData = MutableLiveData<String>()
     val decimalLiveData = MutableLiveData<String>()
+    val gasLiveData = MutableLiveData<BigInteger>()
+    val nativeTokenLiveData = MutableLiveData<Token>()
     val saveStatusLiveData = MutableLiveData<Boolean>()
     var errorCode = MutableLiveData<Int>()
 
@@ -45,6 +52,20 @@ class WalletViewModel(application: Application) : BaseViewModel(application) {
         execute {
             WalletService.initWallet(this, seed)
         }.onSuccess {
+        }.onError {
+            Logger.e(it.message)
+        }
+    }
+
+    fun loadNativeBalance(token: Token) {
+        execute {
+            val ethResponse = WalletService.getBalance(
+                wallet.address,
+                token
+            )
+            token.balance = ethResponse.stripTrailingZeros().toPlainString()
+            nativeTokenLiveData.postValue(token)
+            Logger.d("${token.symbol} = ${token.balance}")
         }.onError {
             Logger.e(it.message)
         }
@@ -131,6 +152,109 @@ class WalletViewModel(application: Application) : BaseViewModel(application) {
         }.onError {
             errorCode.postValue(-1)
             Logger.e(it.message)
+        }
+    }
+
+    fun loadGas(token: Token) {
+        execute {
+            val gas = WalletService.loadGas(token.chain_id)
+            gasLiveData.postValue(gas)
+        }.onError {
+            Logger.e(it.message)
+        }
+    }
+
+    fun loadGasAndLimit(
+        tx: Transaction,
+        onStart: () -> Unit,
+        onSuccess: (gasPair: Pair<BigInteger, BigInteger>) -> Unit,
+        onFinally: () -> Unit
+    ) {
+        execute {
+            val gas = WalletService.loadGas(tx.chainId)
+            val gasLimit = WalletService.loadEstimateGas(tx)
+            Pair(gas, gasLimit)
+        }.onStart {
+            onStart.invoke()
+        }.onSuccess {
+            onSuccess.invoke(it)
+        }.onError {
+            Logger.e(it.message)
+        }.onFinally {
+            onFinally.invoke()
+        }
+    }
+
+    fun createTx(
+        token: Token,
+        to: String,
+        amount: String
+    ): Transaction? {
+        if (!org.web3j.crypto.WalletUtils.isValidAddress(to)) {
+            context.toastOnUi(context.getString(R.string.address_incorrect))
+            return null
+        }
+        if (BigDecimal(amount) <= BigDecimal.ZERO) {
+            context.toastOnUi(context.getString(R.string.please_fill_in_correct_amount))
+            return null
+        }
+
+        var tx = if (token.isNative) {
+            Transaction(
+                key = token.key,
+                tokenName = token.name,
+                tokenSymbol = token.symbol,
+                tokenDecimal = token.decimals,
+                isNative = true,
+                chainId = token.chain_id,
+                from = wallet.address,
+                to = to,
+                value = EthereumUtil.toWei(amount, token.decimals).stripTrailingZeros().toPlainString(),
+                data = "",
+                hash = ""
+            )
+        } else {
+            Transaction(
+                key = token.key,
+                tokenName = token.name,
+                tokenSymbol = token.symbol,
+                tokenDecimal = token.decimals,
+                tokenValue = EthereumUtil.toWei(amount, token.decimals).stripTrailingZeros().toPlainString(),
+                isNative = token.isNative,
+                chainId = token.chain_id,
+                from = wallet.address,
+                to = to,
+                contractAddress = token.contract,
+                value = "0",
+                data = FunctionEncoder.encode(
+                    FunctionUtils.encodeTransfer(
+                        to,
+                        EthereumUtil.toWei(amount, token.decimals).stripTrailingZeros().toPlainString()
+                    )
+                ),
+                hash = ""
+            )
+        }
+        return tx
+    }
+
+    fun senTx(
+        tx: Transaction,
+        onStart: () -> Unit,
+        onSuccess: (tx: Transaction) -> Unit,
+        onFinally: () -> Unit
+    ) {
+        execute {
+            WalletService.sendTx(wallet, tx)
+        }.onStart {
+            onStart.invoke()
+        }.onSuccess {
+            onSuccess.invoke(it)
+        }.onError {
+            Logger.e(it.cause?.message)
+            context.toastOnUi(context.getString(R.string.send_failed))
+        }.onFinally {
+            onFinally.invoke()
         }
     }
 

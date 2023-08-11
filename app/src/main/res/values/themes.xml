@@ -434,6 +434,7 @@
         <item name="editBgColor">@color/color272727</item>
         <item name="addressBgColor">@color/color272727</item>
         <item name="addressBgColor1">#0CFFFFFF</item>
+        <item name="hintTextColor">@color/color616569</item>
     </style>
 
     <style name="Classic.Light">
@@ -544,6 +545,7 @@
         <item name="editBgColor">@color/colorF9FAFA</item>
         <item name="addressBgColor">@color/colorFAFAFA</item>
         <item name="addressBgColor1">@color/colorF2F2F2</item>
+        <item name="hintTextColor">@color/colorC2C9D1</item>
     </style>
 
     <style name="Ocean.Dark">

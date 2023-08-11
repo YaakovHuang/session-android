@@ -1,4 +1,4 @@
-package org.thoughtcrime.securesms.home
+package org.thoughtcrime.securesms.wallet
 
 import android.Manifest
 import android.content.ContentValues
@@ -12,7 +12,6 @@ import android.provider.MediaStore
 import android.view.View
 import androidx.core.view.isVisible
 import com.google.gson.Gson
-import dagger.hilt.android.AndroidEntryPoint
 import network.qki.messenger.R
 import network.qki.messenger.databinding.ActivityCardBinding
 import org.session.libsession.utilities.TextSecurePreferences
@@ -29,7 +28,7 @@ import org.thoughtcrime.securesms.util.toastOnUi
 import java.io.File
 import java.io.FileOutputStream
 
-class CardActivity : PassphraseRequiredActionBarActivity() {
+class PasswordActivity : PassphraseRequiredActionBarActivity() {
 
     private lateinit var binding: ActivityCardBinding
 
@@ -48,8 +47,8 @@ class CardActivity : PassphraseRequiredActionBarActivity() {
         actionBar.setDisplayHomeAsUpEnabled(true)
         actionBar.setHomeButtonEnabled(true)
         with(binding) {
-            var sessionId = TextSecurePreferences.getLocalNumber(this@CardActivity)
-            val userStr = TextSecurePreferences.getUser(this@CardActivity)
+            var sessionId = TextSecurePreferences.getLocalNumber(this@PasswordActivity)
+            val userStr = TextSecurePreferences.getUser(this@PasswordActivity)
             var user = Gson().fromJson(userStr, User::class.java)
             tvName.text = getString(R.string.card)
             GlideHelper.showImage(
@@ -70,7 +69,7 @@ class CardActivity : PassphraseRequiredActionBarActivity() {
                 sendToClip(sessionId)
             }
             llSave.setOnClickListener {
-                Permissions.with(this@CardActivity)
+                Permissions.with(this@PasswordActivity)
                     .request(Manifest.permission.WRITE_EXTERNAL_STORAGE)
                     .maxSdkVersion(Build.VERSION_CODES.P)
                     .withPermanentDenialDialog(getString(R.string.MediaPreviewActivity_signal_needs_the_storage_permission_in_order_to_write_to_external_storage_but_it_has_been_permanently_denied))

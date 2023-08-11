@@ -1,12 +1,12 @@
 {
   "formatVersion": 1,
   "database": {
-    "version": 5,
-    "identityHash": "bb56afb3daf659284810e556af571d81",
+    "version": 62,
+    "identityHash": "54d85549b53a9d61ac31baf6db5f0e0a",
     "entities": [
       {
         "tableName": "Wallet",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `key` TEXT, `mnemonic` TEXT, `pk` TEXT, `address` TEXT NOT NULL, `pwd` TEXT)",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `key` TEXT NOT NULL, `mnemonic` TEXT NOT NULL, `pk` TEXT NOT NULL, `address` TEXT NOT NULL, `pwd` TEXT NOT NULL)",
         "fields": [
           {
             "fieldPath": "id",
@@ -18,19 +18,19 @@
             "fieldPath": "key",
             "columnName": "key",
             "affinity": "TEXT",
-            "notNull": false
+            "notNull": true
           },
           {
             "fieldPath": "mnemonic",
             "columnName": "mnemonic",
             "affinity": "TEXT",
-            "notNull": false
+            "notNull": true
           },
           {
             "fieldPath": "pk",
             "columnName": "pk",
             "affinity": "TEXT",
-            "notNull": false
+            "notNull": true
           },
           {
             "fieldPath": "address",
@@ -42,7 +42,7 @@
             "fieldPath": "pwd",
             "columnName": "pwd",
             "affinity": "TEXT",
-            "notNull": false
+            "notNull": true
           }
         ],
         "primaryKey": {
@@ -56,7 +56,7 @@
       },
       {
         "tableName": "Chain",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `chain_id` INTEGER NOT NULL, `name` TEXT, `chain_name` TEXT, `chain_symbol` TEXT, `browser` TEXT, `token_type` TEXT, `currency` TEXT, `sort` INTEGER, `is_default` TEXT, `is_customize` INTEGER, `icon` TEXT, `currency_icon` TEXT)",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `chain_id` INTEGER NOT NULL, `chain_name` TEXT, `chain_symbol` TEXT, `browser` TEXT, `token_type` TEXT, `currency` TEXT, `sort` INTEGER, `is_default` TEXT, `is_customize` INTEGER, `icon` TEXT, `currency_icon` TEXT)",
         "fields": [
           {
             "fieldPath": "id",
@@ -69,12 +69,6 @@
             "columnName": "chain_id",
             "affinity": "INTEGER",
             "notNull": true
-          },
-          {
-            "fieldPath": "name",
-            "columnName": "name",
-            "affinity": "TEXT",
-            "notNull": false
           },
           {
             "fieldPath": "chain_name",
@@ -216,7 +210,7 @@
       },
       {
         "tableName": "Account",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `key` TEXT, `chain_id` INTEGER NOT NULL, `address` TEXT, `pk` TEXT, `isSelect` INTEGER NOT NULL, `sort` INTEGER NOT NULL, `value` TEXT NOT NULL)",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `key` TEXT NOT NULL, `chain_id` INTEGER NOT NULL, `address` TEXT NOT NULL, `pk` TEXT NOT NULL, `isSelect` INTEGER NOT NULL, `sort` INTEGER NOT NULL, `value` TEXT NOT NULL)",
         "fields": [
           {
             "fieldPath": "id",
@@ -228,7 +222,7 @@
             "fieldPath": "key",
             "columnName": "key",
             "affinity": "TEXT",
-            "notNull": false
+            "notNull": true
           },
           {
             "fieldPath": "chain_id",
@@ -240,13 +234,13 @@
             "fieldPath": "address",
             "columnName": "address",
             "affinity": "TEXT",
-            "notNull": false
+            "notNull": true
           },
           {
             "fieldPath": "pk",
             "columnName": "pk",
             "affinity": "TEXT",
-            "notNull": false
+            "notNull": true
           },
           {
             "fieldPath": "isSelect",
@@ -278,7 +272,7 @@
       },
       {
         "tableName": "Token",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `key` TEXT, `network` TEXT NOT NULL, `chain_id` INTEGER NOT NULL, `name` TEXT, `symbol` TEXT, `contract` TEXT NOT NULL, `icon` TEXT, `price` TEXT NOT NULL, `isNative` INTEGER NOT NULL, `decimals` INTEGER NOT NULL, `balance` TEXT NOT NULL, `value` TEXT NOT NULL, `sort` INTEGER NOT NULL)",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `key` TEXT NOT NULL, `network` TEXT NOT NULL, `chain_id` INTEGER NOT NULL, `name` TEXT NOT NULL, `symbol` TEXT NOT NULL, `contract` TEXT NOT NULL, `icon` TEXT NOT NULL, `token_type` TEXT NOT NULL, `price` TEXT NOT NULL, `isNative` INTEGER NOT NULL, `decimals` INTEGER NOT NULL, `balance` TEXT NOT NULL, `value` TEXT NOT NULL, `sort` INTEGER NOT NULL)",
         "fields": [
           {
             "fieldPath": "id",
@@ -290,7 +284,7 @@
             "fieldPath": "key",
             "columnName": "key",
             "affinity": "TEXT",
-            "notNull": false
+            "notNull": true
           },
           {
             "fieldPath": "network",
@@ -308,13 +302,13 @@
             "fieldPath": "name",
             "columnName": "name",
             "affinity": "TEXT",
-            "notNull": false
+            "notNull": true
           },
           {
             "fieldPath": "symbol",
             "columnName": "symbol",
             "affinity": "TEXT",
-            "notNull": false
+            "notNull": true
           },
           {
             "fieldPath": "contract",
@@ -326,7 +320,13 @@
             "fieldPath": "icon",
             "columnName": "icon",
             "affinity": "TEXT",
-            "notNull": false
+            "notNull": true
+          },
+          {
+            "fieldPath": "token_type",
+            "columnName": "token_type",
+            "affinity": "TEXT",
+            "notNull": true
           },
           {
             "fieldPath": "price",
@@ -578,7 +578,7 @@
     "views": [],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
-      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, 'bb56afb3daf659284810e556af571d81')"
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '54d85549b53a9d61ac31baf6db5f0e0a')"
     ]
   }
 }

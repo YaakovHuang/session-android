@@ -33,4 +33,7 @@ abstract class TokenDao {
     @Query("select * from token where contract = :contract limit 1")
     abstract fun loadToken(contract: String): Token
 
+    @Query("select * from token where chain_id = :chainId and isNative = :isNative limit 1")
+    abstract fun loadToken(chainId: Int, isNative: Boolean): Token
+
 }
