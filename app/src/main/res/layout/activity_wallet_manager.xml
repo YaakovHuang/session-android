@@ -1,0 +1,213 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="?attr/commonToolbarColor"
+    android:orientation="vertical">
+
+    <androidx.appcompat.widget.Toolbar
+        android:id="@+id/toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:contentInsetStart="0dp">
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="?attr/actionBarSize"
+            android:layout_marginLeft="20dp"
+            android:layout_marginRight="20dp">
+
+            <TextView
+                android:id="@+id/tvAppName"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentStart="true"
+                android:layout_centerInParent="true"
+                android:text="@string/wallet_manager"
+                android:textColor="?reverseMainColor"
+                android:textSize="20sp"
+                android:textStyle="bold" />
+
+        </RelativeLayout>
+
+    </androidx.appcompat.widget.Toolbar>
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:background="@drawable/shape_bg_top_20"
+        android:fillViewport="true"
+        android:overScrollMode="never">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical"
+            android:padding="20dp">
+
+            <LinearLayout
+                android:id="@+id/llAddress"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="12dp"
+                android:gravity="center_vertical"
+                android:orientation="horizontal"
+                android:paddingTop="16dp"
+                android:paddingBottom="16dp">
+
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:gravity="center|start"
+                    android:text="@string/address"
+                    android:textColor="@color/color616569"
+                    android:textSize="@dimen/medium_font_size"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:id="@+id/tvAddress"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:drawableEnd="@drawable/ic_copy"
+                    android:drawablePadding="10dp"
+                    android:drawableTint="?android:textColorPrimary"
+                    android:gravity="center"
+                    android:textColor="?android:textColorPrimary"
+                    android:textSize="@dimen/medium_font_size"
+                    tools:text="0x000...000" />
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/llUpdatePwd"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center_vertical"
+                android:orientation="horizontal"
+                android:paddingTop="16dp"
+                android:paddingBottom="16dp">
+
+                <TextView
+                    android:id="@+id/tvPassword"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:gravity="center|start"
+                    android:text="@string/update_password"
+                    android:textColor="@color/color616569"
+                    android:textSize="@dimen/medium_font_size"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:drawableEnd="@drawable/ic_arrow_end_1"
+                    android:drawablePadding="10dp"
+                    android:drawableTint="?android:textColorPrimary"
+                    android:gravity="center"
+                    android:textColor="?android:textColorPrimary"
+                    android:textSize="@dimen/medium_font_size" />
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/llPk"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center_vertical"
+                android:orientation="horizontal"
+                android:paddingTop="16dp"
+                android:paddingBottom="16dp">
+
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:gravity="center|start"
+                    android:text="@string/export_private_key"
+                    android:textColor="@color/color616569"
+                    android:textSize="@dimen/medium_font_size"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:drawableEnd="@drawable/ic_arrow_end_1"
+                    android:drawablePadding="10dp"
+                    android:drawableTint="?android:textColorPrimary"
+                    android:gravity="center"
+                    android:textColor="?android:textColorPrimary"
+                    android:textSize="@dimen/medium_font_size" />
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/llMnemonic"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center_vertical"
+                android:orientation="horizontal"
+                android:paddingTop="16dp"
+                android:paddingBottom="16dp">
+
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:gravity="center|start"
+                    android:text="@string/export_mnemonic"
+                    android:textColor="@color/color616569"
+                    android:textSize="@dimen/medium_font_size"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:drawableEnd="@drawable/ic_arrow_end_1"
+                    android:drawablePadding="10dp"
+                    android:drawableTint="?android:textColorPrimary"
+                    android:gravity="center"
+                    android:textColor="?android:textColorPrimary"
+                    android:textSize="@dimen/medium_font_size" />
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/llRpc"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center_vertical"
+                android:orientation="horizontal"
+                android:paddingTop="16dp"
+                android:paddingBottom="16dp">
+
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:gravity="center|start"
+                    android:text="@string/rpc_node"
+                    android:textColor="@color/color616569"
+                    android:textSize="@dimen/medium_font_size"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:drawableEnd="@drawable/ic_arrow_end_1"
+                    android:drawablePadding="10dp"
+                    android:drawableTint="?android:textColorPrimary"
+                    android:gravity="center"
+                    android:textColor="?android:textColorPrimary"
+                    android:textSize="@dimen/medium_font_size" />
+
+            </LinearLayout>
+
+        </LinearLayout>
+
+    </ScrollView>
+
+</LinearLayout>

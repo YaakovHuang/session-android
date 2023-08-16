@@ -297,6 +297,48 @@
             android:theme="@style/Theme.Session.DayNight.NoActionBar" />
 
         <activity
+            android:name="org.thoughtcrime.securesms.wallet.PasswordActivity"
+            android:label=""
+            android:screenOrientation="portrait"
+            android:theme="@style/Theme.Session.DayNight.NoActionBar" />
+
+        <activity
+            android:name="org.thoughtcrime.securesms.wallet.WalletManagerActivity"
+            android:label=""
+            android:screenOrientation="portrait"
+            android:theme="@style/Theme.Session.DayNight.NoActionBar" />
+
+        <activity
+            android:name="org.thoughtcrime.securesms.wallet.PasswordUpdateActivity"
+            android:label=""
+            android:screenOrientation="portrait"
+            android:theme="@style/Theme.Session.DayNight.NoActionBar" />
+
+        <activity
+            android:name="org.thoughtcrime.securesms.wallet.PasswordForgetActivity"
+            android:label=""
+            android:screenOrientation="portrait"
+            android:theme="@style/Theme.Session.DayNight.NoActionBar" />
+
+        <activity
+            android:name="org.thoughtcrime.securesms.wallet.ViewMnemonicActivity"
+            android:label=""
+            android:screenOrientation="portrait"
+            android:theme="@style/Theme.Session.DayNight.NoActionBar" />
+
+        <activity
+            android:name="org.thoughtcrime.securesms.wallet.ViewPkActivity"
+            android:label=""
+            android:screenOrientation="portrait"
+            android:theme="@style/Theme.Session.DayNight.NoActionBar" />
+
+        <activity
+            android:name="org.thoughtcrime.securesms.wallet.RpcActivity"
+            android:label=""
+            android:screenOrientation="portrait"
+            android:theme="@style/Theme.Session.DayNight.NoActionBar" />
+
+        <activity
             android:name="org.thoughtcrime.securesms.wallet.qrcode.QrCodeActivity"
             android:label=""
             android:launchMode="singleTask"

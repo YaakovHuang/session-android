@@ -8,9 +8,14 @@ import com.lxj.xpopup.XPopup
 import dagger.hilt.android.AndroidEntryPoint
 import network.qki.messenger.R
 import network.qki.messenger.databinding.ActivityWalletBinding
+import org.greenrobot.eventbus.EventBus
+import org.greenrobot.eventbus.Subscribe
+import org.greenrobot.eventbus.ThreadMode
 import org.session.libsession.utilities.TextSecurePreferences
 import org.thoughtcrime.securesms.PassphraseRequiredActionBarActivity
 import org.thoughtcrime.securesms.database.room.DaoHelper
+import org.thoughtcrime.securesms.et.TokenUpdateEvent
+import org.thoughtcrime.securesms.et.WalletUpdateEvent
 import org.thoughtcrime.securesms.util.GlideHelper
 import org.thoughtcrime.securesms.util.StatusBarUtil
 import org.thoughtcrime.securesms.util.show
@@ -37,6 +42,12 @@ class WalletActivity : PassphraseRequiredActionBarActivity() {
         binding = ActivityWalletBinding.inflate(layoutInflater)
         setContentView(binding.root)
         StatusBarUtil.setStatusColor(this, true, false, R.color.core_white)
+        EventBus.getDefault().register(this)
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        EventBus.getDefault().unregister(this)
     }
 
     override fun initViews() {
@@ -76,6 +87,10 @@ class WalletActivity : PassphraseRequiredActionBarActivity() {
                 // TODO:  
                 TextSecurePreferences.setHide(this@WalletActivity, isChecked)
             }
+            llWallet.setOnClickListener {
+                val intent = Intent(this@WalletActivity, WalletManagerActivity::class.java)
+                show(intent)
+            }
 
         }
     }
@@ -92,6 +107,16 @@ class WalletActivity : PassphraseRequiredActionBarActivity() {
             adapter.data.clear()
             adapter.setNewInstance(it as MutableList<Token>?)
         }
+    }
+
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    fun onEvent(event: TokenUpdateEvent) {
+       initData()
+    }
+
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    fun onEvent(event: WalletUpdateEvent) {
+        viewModel.wallet = DaoHelper.loadDefaultWallet()
     }
 
     private fun updateUI() {

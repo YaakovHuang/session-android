@@ -1124,4 +1124,24 @@
     <string name="confirm_password">Confirm password</string>
     <string name="tip_password">please set a password to facilitate transaction operations.</string>
     <string name="tip_password_1">The password is only used for intra application verification operations.</string>
+    <string name="twice_password_diff">Inconsistent password twice!</string>
+    <string name="update_password">Change password</string>
+    <string name="address">Address</string>
+    <string name="export_private_key">View Private Key</string>
+    <string name="export_mnemonic">View Mnemonic Phrase</string>
+    <string name="rpc_node">RPC Node</string>
+    <string name="wallet_manager">Manage Wallet</string>
+    <string name="original_password">Original Password</string>
+    <string name="original_incorrect">The old password is incorrect</string>
+    <string name="pwd_modify_success">Password reset success</string>
+    <string name="forget_password">Forget Password</string>
+    <string name="mnemonic_private_key">Mnemonic/Private Key</string>
+    <string name="tip_forget_password">Enter the mnemonic/private key, please separate the mnemonics with spaces</string>
+    <string name="mismatch_key_mismatch">Mnemonic/Private Key mismatch</string>
+    <string name="mnemonic_words">Mnemonic words</string>
+    <string name="tip_mnemonic_export">The mnemonic key is the key you use to log in to this application or other third-party wallets. Please do not disclose it.</string>
+    <string name="tip_pk_export">The private key is the key you use to log in to this application or other third-party wallets. Please do not disclose it.</string>
+    <string name="private_key">Private Key</string>
+    <string name="password_set_success">Password set successfully</string>
+    <string name="set_password">Set Password</string>
 </resources>

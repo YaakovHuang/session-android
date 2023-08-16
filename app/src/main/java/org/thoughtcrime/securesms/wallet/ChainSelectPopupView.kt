@@ -31,6 +31,7 @@ class ChainSelectPopupView(
         super.onCreate()
         binding = LayoutPopupChainSelectBinding.bind(popupImplView)
         binding.apply {
+            tvTitle.text = context.getString(R.string.select_network)
             val chains = DaoHelper.loadAllChains()
             recyclerView.layoutManager = LinearLayoutManager(context)
             recyclerView.adapter = adapter

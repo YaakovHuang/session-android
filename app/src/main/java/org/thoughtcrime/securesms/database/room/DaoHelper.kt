@@ -21,6 +21,10 @@ object DaoHelper {
         AppDataBase.getInstance().walletDao().delete(wallet)
     }
 
+    fun updateWallet(wallet: Wallet) {
+        AppDataBase.getInstance().walletDao().update(wallet)
+    }
+
     fun loadSelectAccount(): Account {
         return AppDataBase.getInstance().accountDao().loadSelectAccount()
     }
@@ -53,6 +57,29 @@ object DaoHelper {
         }
         return rpc
     }
+
+    fun loadRpcsByChainId(chainId: Int): List<Rpc> {
+        return AppDataBase.getInstance().rpcDao().loadRpcsByChainId(chainId)
+    }
+
+    fun updateSelectRpc(rpc: Rpc) {
+        val rpcs = AppDataBase.getInstance().rpcDao().loadRpcsByChainId(rpc.chainId!!)
+        var selectRpc: Rpc? = null
+        rpcs.forEach { it ->
+            if (it.id == rpc.id) {
+                selectRpc = it
+            }
+            if (it.isSelect) {
+                it.isSelect = false
+                AppDataBase.getInstance().rpcDao().update(it)
+            }
+        }
+        selectRpc?.let {
+            it.isSelect = true
+            AppDataBase.getInstance().rpcDao().update(it)
+        }
+    }
+
 
     fun loadSelectChain(): Chain {
         val account = AppDataBase.getInstance().accountDao().loadSelectAccount()

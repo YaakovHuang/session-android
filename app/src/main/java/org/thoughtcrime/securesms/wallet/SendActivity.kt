@@ -1,5 +1,6 @@
 package org.thoughtcrime.securesms.wallet
 
+import android.content.Intent
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
@@ -8,11 +9,15 @@ import androidx.core.view.isGone
 import com.lxj.xpopup.XPopup
 import network.qki.messenger.R
 import network.qki.messenger.databinding.ActivitySendBinding
+import org.greenrobot.eventbus.EventBus
+import org.greenrobot.eventbus.Subscribe
+import org.greenrobot.eventbus.ThreadMode
 import org.session.libsession.utilities.TextSecurePreferences
 import org.session.libsession.utilities.getColorFromAttr
 import org.thoughtcrime.securesms.PassphraseRequiredActionBarActivity
 import org.thoughtcrime.securesms.constants.AppConst
 import org.thoughtcrime.securesms.database.room.DaoHelper
+import org.thoughtcrime.securesms.et.WalletUpdateEvent
 import org.thoughtcrime.securesms.util.EthereumUtil
 import org.thoughtcrime.securesms.util.GlideHelper
 import org.thoughtcrime.securesms.util.StatusBarUtil
@@ -20,6 +25,7 @@ import org.thoughtcrime.securesms.util.formatAddress
 import org.thoughtcrime.securesms.util.openUrl
 import org.thoughtcrime.securesms.util.parcelable
 import org.thoughtcrime.securesms.util.sendToClip
+import org.thoughtcrime.securesms.util.show
 import org.thoughtcrime.securesms.util.toastOnUi
 import org.thoughtcrime.securesms.wallet.qrcode.QrCodeResult
 import org.web3j.crypto.WalletUtils
@@ -54,6 +60,7 @@ class SendActivity : PassphraseRequiredActionBarActivity() {
         binding = ActivitySendBinding.inflate(layoutInflater)
         setContentView(binding.root)
         StatusBarUtil.setStatusColor(this, false, TextSecurePreferences.CLASSIC_DARK != TextSecurePreferences.getThemeStyle(this), getColorFromAttr(R.attr.commonToolbarColor))
+        EventBus.getDefault().register(this)
         nativeToken = DaoHelper.loadToken(account.chain_id, true)
         intent.parcelable<Token>(WalletActivity.KEY_TOKEN)?.let {
             token = it
@@ -64,6 +71,11 @@ class SendActivity : PassphraseRequiredActionBarActivity() {
                 binding.etTo.setText(it)
             }
         }
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        EventBus.getDefault().unregister(this)
     }
 
     override fun initViews() {
@@ -202,7 +214,8 @@ class SendActivity : PassphraseRequiredActionBarActivity() {
                             ) {
                                 this@SendActivity.tx = tx
                                 if (viewModel.wallet.pwd.isNullOrEmpty()) {
-
+                                    val intent = Intent(this@SendActivity, PasswordActivity::class.java)
+                                    show(intent)
                                 } else {
                                     XPopup.Builder(this@SendActivity)
                                         .enableDrag(false)
@@ -258,6 +271,11 @@ class SendActivity : PassphraseRequiredActionBarActivity() {
                 viewModel.pageNum++
             }
         }
+    }
+
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    fun onEvent(event: WalletUpdateEvent) {
+        viewModel.wallet = DaoHelper.loadDefaultWallet()
     }
 
 

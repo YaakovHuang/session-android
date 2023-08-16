@@ -1106,4 +1106,24 @@
     <string name="confirm_password">确认密码</string>
     <string name="tip_password">请设置密码，以方便交易操作。</string>
     <string name="tip_password_1">该密码仅用于应用内部验证操作。</string>
+    <string name="twice_password_diff">两次密码不一致</string>
+    <string name="update_password">修改密码</string>
+    <string name="address">地址</string>
+    <string name="export_private_key">查看私钥</string>
+    <string name="export_mnemonic">查看助记词</string>
+    <string name="rpc_node">RPC节点</string>
+    <string name="wallet_manager">管理钱包</string>
+    <string name="original_password">旧密码</string>
+    <string name="original_incorrect">旧密码不正确</string>
+    <string name="pwd_modify_success">密码修改成功</string>
+    <string name="forget_password">忘记密码</string>
+    <string name="mnemonic_private_key">助记词/私钥</string>
+    <string name="tip_forget_password">输入助记词/私钥，助记词请用空格分隔</string>
+    <string name="mismatch_key_mismatch">助记词/私钥不匹配</string>
+    <string name="mnemonic_words">助记词</string>
+    <string name="tip_mnemonic_export">助记词是您登录本应用或其他第三方钱包时使用的密钥，请不要透露。</string>
+    <string name="tip_pk_export">私钥是您登录本应用或其他第三方钱包时使用的密钥，请不要透露。</string>
+    <string name="private_key">私钥</string>
+    <string name="password_set_success">密码设置成功</string>
+    <string name="set_password">设置密码</string>
 </resources>

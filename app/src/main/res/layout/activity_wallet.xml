@@ -73,6 +73,7 @@
             android:orientation="vertical">
 
             <LinearLayout
+                android:id="@+id/llWallet"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="20dp"
@@ -122,7 +123,7 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:maxLines="1"
-                            android:text="2179.08"
+                            android:text="0"
                             android:textColor="@color/core_white"
                             android:textSize="20sp"
                             android:textStyle="bold" />

@@ -25,6 +25,7 @@ import org.web3j.protocol.Web3j
 import org.web3j.protocol.core.DefaultBlockParameterName
 import org.web3j.protocol.core.Response
 import org.web3j.protocol.core.methods.request.Transaction
+import org.web3j.protocol.http.HttpService
 import org.web3j.utils.Numeric
 import java.math.BigDecimal
 import java.math.BigInteger
@@ -202,6 +203,11 @@ object WalletService {
             DaoHelper.insertTx(tx)
         }
         return tx
+    }
+
+    fun checkRpcStatus(rpc: String): Boolean {
+        var send = Web3j.build(HttpService(rpc)).ethBlockNumber().send()
+        return send.hasError()
     }
 }
 

@@ -149,6 +149,10 @@ data class Rpc(
     var isSelect: Boolean = false,
     var sort: Int = 0
 ) : Parcelable {
+
+    @Ignore
+    var delayTime: Long = 0
+
     override fun equals(other: Any?): Boolean {
         if (other == this) return true
         if (other !is Rpc) return false

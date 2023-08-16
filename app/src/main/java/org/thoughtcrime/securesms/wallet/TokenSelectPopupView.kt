@@ -34,6 +34,7 @@ class TokenSelectPopupView(
         super.onCreate()
         binding = LayoutPopupChainSelectBinding.bind(popupImplView)
         binding.apply {
+            tvTitle.text = context.getString(R.string.select_token)
             val tokens = DaoHelper.loadTokens()
             recyclerView.layoutManager = LinearLayoutManager(context)
             recyclerView.adapter = adapter

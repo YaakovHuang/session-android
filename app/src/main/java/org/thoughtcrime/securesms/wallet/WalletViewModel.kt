@@ -27,6 +27,7 @@ class WalletViewModel(application: Application) : BaseViewModel(application) {
     val gasLiveData = MutableLiveData<BigInteger>()
     val nativeTokenLiveData = MutableLiveData<Token>()
     val saveStatusLiveData = MutableLiveData<Boolean>()
+    val rpcDelayLiveData = MutableLiveData<Rpc>()
     var errorCode = MutableLiveData<Int>()
 
     var pageNum = 1
@@ -255,6 +256,25 @@ class WalletViewModel(application: Application) : BaseViewModel(application) {
             context.toastOnUi(context.getString(R.string.send_failed))
         }.onFinally {
             onFinally.invoke()
+        }
+    }
+
+    fun checkRpcDelay(rpcs: List<Rpc>) {
+        execute {
+            rpcs.forEach {
+                try {
+                    var startTime = System.currentTimeMillis()
+                    var error = WalletService.checkRpcStatus(it.rpc!!)
+                    if (!error) {
+                        var long = System.currentTimeMillis() - startTime
+                        it.delayTime = long
+                        rpcDelayLiveData.postValue(it)
+                    }
+                } catch (e: Exception) {
+                    Logger.e(e.message)
+                }
+
+            }
         }
     }
 

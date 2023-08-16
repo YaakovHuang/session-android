@@ -18,7 +18,6 @@ import org.thoughtcrime.securesms.util.StatusBarUtil
 import org.thoughtcrime.securesms.util.parcelable
 import org.thoughtcrime.securesms.util.toastOnUi
 
-@AndroidEntryPoint
 class AddTokenActivity : PassphraseRequiredActionBarActivity() {
 
     private lateinit var binding: ActivityAddTokenBinding
