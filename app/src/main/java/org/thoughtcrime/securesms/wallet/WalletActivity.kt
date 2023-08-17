@@ -19,6 +19,9 @@ import org.thoughtcrime.securesms.et.WalletUpdateEvent
 import org.thoughtcrime.securesms.util.GlideHelper
 import org.thoughtcrime.securesms.util.StatusBarUtil
 import org.thoughtcrime.securesms.util.show
+import org.thoughtcrime.securesms.util.toastOnUi
+import org.thoughtcrime.securesms.wallet.qrcode.QrCodeResult
+import org.web3j.crypto.WalletUtils
 
 @AndroidEntryPoint
 class WalletActivity : PassphraseRequiredActionBarActivity() {
@@ -36,6 +39,19 @@ class WalletActivity : PassphraseRequiredActionBarActivity() {
         const val KEY_TOKEN = "token"
 
     }
+
+
+    private val qrResult = registerForActivityResult(QrCodeResult()) {
+        it ?: return@registerForActivityResult
+        if (WalletUtils.isValidAddress(it)) {
+            val intent = Intent(this@WalletActivity, SendActivity::class.java)
+            intent.putExtra(SendActivity.KEY_TO, it)
+            show(intent)
+        } else {
+            toastOnUi(getString(R.string.address_incorrect))
+        }
+    }
+
 
     override fun onCreate(savedInstanceState: Bundle?, ready: Boolean) {
         super.onCreate(savedInstanceState, ready)
@@ -84,12 +100,27 @@ class WalletActivity : PassphraseRequiredActionBarActivity() {
                     .show()
             }
             ivView.setOnCheckedChangeListener { _, isChecked ->
-                // TODO:  
                 TextSecurePreferences.setHide(this@WalletActivity, isChecked)
+                adapter.setHide(isChecked)
+                updateUI()
             }
             llWallet.setOnClickListener {
                 val intent = Intent(this@WalletActivity, WalletManagerActivity::class.java)
                 show(intent)
+            }
+            llTransfer.setOnClickListener {
+                val intent = Intent(this@WalletActivity, SendActivity::class.java)
+                show(intent)
+            }
+            llReceive.setOnClickListener {
+                val account = DaoHelper.loadSelectAccount()
+                val defaultToken = DaoHelper.loadToken(account.chain_id, true)
+                XPopup.Builder(this@WalletActivity)
+                    .asCustom(ReceivePopupView(this@WalletActivity, defaultToken))
+                    .show()
+            }
+            llScan.setOnClickListener {
+                qrResult.launch(null)
             }
 
         }
@@ -111,12 +142,12 @@ class WalletActivity : PassphraseRequiredActionBarActivity() {
 
     @Subscribe(threadMode = ThreadMode.MAIN)
     fun onEvent(event: TokenUpdateEvent) {
-       initData()
+        initData()
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)
     fun onEvent(event: WalletUpdateEvent) {
-        viewModel.wallet = DaoHelper.loadDefaultWallet()
+        viewModel.wallet.pwd = event.wallet?.pwd ?: ""
     }
 
     private fun updateUI() {
@@ -128,7 +159,10 @@ class WalletActivity : PassphraseRequiredActionBarActivity() {
             R.drawable.ic_pic_default_round,
             R.drawable.ic_pic_default_round
         )
+        binding.ivView.isChecked = TextSecurePreferences.isHide(this)
         binding.tvChainName.text = chain.chain_name
+        // TODO:
+        binding.tvValue.text = if (TextSecurePreferences.isHide(this)) getString(R.string.content_hide) else "0"
     }
 
 }

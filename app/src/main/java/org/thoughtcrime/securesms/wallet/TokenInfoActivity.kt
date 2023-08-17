@@ -143,10 +143,16 @@ class TokenInfoActivity : PassphraseRequiredActionBarActivity() {
                 ivLogo, token?.icon ?: "", 100, R.drawable.ic_pic_default_round, R.drawable.ic_pic_default_round
             )
             tvSymbol.text = "${token?.symbol}"
-            tvPrice.text = "\$ ${token?.price}"
             tvAddress.text = "${viewModel.wallet.address}"
-            tvBalance.text = EthereumUtil.format(BigDecimal(token?.balance), token?.decimals ?: 0, AppConst.SHOW_DECIMAL)
-            tvValue.text = "\$${token?.value}"
+            if (TextSecurePreferences.isHide(this@TokenInfoActivity)) {
+                tvPrice.text = getString(R.string.content_hide)
+                tvBalance.text = getString(R.string.content_hide)
+                tvValue.text = getString(R.string.content_hide)
+            } else {
+                tvPrice.text = "\$ ${token?.price}"
+                tvBalance.text = EthereumUtil.format(BigDecimal(token?.balance), token?.decimals ?: 0, AppConst.SHOW_DECIMAL)
+                tvValue.text = "\$${token?.value}"
+            }
         }
     }
 

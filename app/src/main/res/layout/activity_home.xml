@@ -19,14 +19,14 @@
         android:layout_marginEnd="20dp"
         android:background="?borderColor" />
 
-    <com.google.android.material.tabs.TabLayout
-        android:id="@+id/tabLayout"
+    <com.google.android.material.bottomnavigation.BottomNavigationView
+        android:id="@+id/bottom_navigation_view"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        app:tabBackground="@android:color/transparent"
-        app:tabGravity="fill"
-        app:tabIndicator="@null"
-        app:tabMode="fixed"
-        app:tabRippleColor="@android:color/transparent" />
+        android:background="?colorPrimary"
+        app:itemIconSize="24dp"
+        app:itemIconTint="@color/selector_tab_color"
+        app:labelVisibilityMode="unlabeled"
+        app:menu="@menu/menu_navigation_home" />
 
 </LinearLayout>

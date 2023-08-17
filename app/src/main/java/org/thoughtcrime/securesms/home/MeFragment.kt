@@ -24,6 +24,7 @@ import org.thoughtcrime.securesms.util.formatAddress
 import org.thoughtcrime.securesms.util.sendToClip
 import org.thoughtcrime.securesms.util.viewbindingdelegate.viewBinding
 import org.thoughtcrime.securesms.wallet.WalletActivity
+import org.thoughtcrime.securesms.wallet.WalletViewModel
 
 
 /**
@@ -36,6 +37,7 @@ class MeFragment : BaseFragment<ETViewModel>(R.layout.fragment_me) {
     private val binding by viewBinding(FragmentMeBinding::bind)
 
     override val viewModel by viewModels<ETViewModel>()
+    private val walletViewModel by viewModels<WalletViewModel>()
 
     private var isFirst: Boolean = true
     private var user: User? = null
@@ -46,11 +48,6 @@ class MeFragment : BaseFragment<ETViewModel>(R.layout.fragment_me) {
         initView()
         initObserver()
         initData()
-    }
-
-    override fun onResume() {
-        super.onResume()
-        //StatusBarUtil.setStatusColor(activity, true, false, ContextCompat.getColor(requireContext(), R.color.core_white))
     }
 
     override fun onDestroy() {
@@ -116,14 +113,14 @@ class MeFragment : BaseFragment<ETViewModel>(R.layout.fragment_me) {
                 val intent = Intent(context, AboutActivity::class.java)
                 show(intent)
             }
-            ivCopy.setOnClickListener {
+            tvAddress.setOnClickListener {
                 requireContext().sendToClip(viewModel.wallet.address)
             }
         }
     }
 
     private fun initData() {
-        loadData()
+        walletViewModel.initWallet {}
     }
 
     private fun initObserver() {
@@ -135,18 +132,28 @@ class MeFragment : BaseFragment<ETViewModel>(R.layout.fragment_me) {
                 viewModel.updateLocalUser(it.user)
             }
         }
+        walletViewModel.initWalletLiveData.observe(viewLifecycleOwner) {
+            if (it == true) {
+                binding.stateLayout.showContentView()
+                loadData()
+            } else {
+                binding.stateLayout.showEmptyView()
+            }
+        }
     }
 
     private fun loadData() {
-        viewModel.loadUserInfo({
-            if (isFirst) {
-                // showLoading()
-            }
-        }, {
-            isFirst = false
-            //hideLoading()
-            stopRefreshing(binding.swipeRefreshLayout)
-        }, viewModel.wallet.address)
+        if (walletViewModel.initWalletLiveData.value == true) {
+            viewModel.loadUserInfo({
+                if (isFirst) {
+                    binding.stateLayout.showProgressView()
+                }
+            }, {
+                isFirst = false
+                binding.stateLayout.showContentView()
+                stopRefreshing(binding.swipeRefreshLayout)
+            }, viewModel.wallet.address)
+        }
     }
 
     private fun updateUI(user: User) {
@@ -159,7 +166,7 @@ class MeFragment : BaseFragment<ETViewModel>(R.layout.fragment_me) {
             tvFollowNum.text = "${user.FollowCount}"
             tvFollowerNum.text = "${user.FansCount}"
             tvMoments.text = "${user.TwCount}"
-            tvAddress.text = "${viewModel.wallet.address.formatAddress()}"
+            tvAddress.text = "${viewModel.wallet?.address?.formatAddress()}"
         }
     }
 

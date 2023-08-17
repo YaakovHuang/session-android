@@ -41,7 +41,7 @@ class ScanQRCodeFragment : Fragment() {
         try {
             scanningThread.start()
         } catch (exception: Exception) {
-            // Do nothing
+           Logger.e(exception.message)
         }
         scanningThread.setScanListener(scanListener)
     }

@@ -198,8 +198,8 @@ dependencies {
     debugImplementation 'com.amitshekhar.android:debug-db:1.0.6'
 }
 
-def canonicalVersionCode = 359
-def canonicalVersionName = "1.18.8"
+def canonicalVersionCode = 360
+def canonicalVersionName = "1.18.9"
 
 def postFixSize = 10
 def abiPostFix = ['armeabi-v7a': 1,
@@ -298,7 +298,7 @@ android {
             minifyEnabled false
         }
         debug {
-            //resValue("string", "PORT_NUMBER", "8082")
+            resValue("string", "PORT_NUMBER", "8082")
             minifyEnabled false
         }
     }

@@ -19,7 +19,6 @@ import androidx.appcompat.app.AppCompatActivity;
 import com.hjq.language.MultiLanguages;
 
 import org.session.libsession.utilities.TextSecurePreferences;
-import org.session.libsession.utilities.dynamiclanguage.DynamicLanguageActivityHelper;
 import org.thoughtcrime.securesms.conversation.v2.WindowUtil;
 import org.thoughtcrime.securesms.util.ActivityUtilitiesKt;
 import org.thoughtcrime.securesms.util.ThemeState;
@@ -87,7 +86,7 @@ public abstract class BaseActionBarActivity extends AppCompatActivity {
   protected void onResume() {
     super.onResume();
     initializeScreenshotSecurity(true);
-    DynamicLanguageActivityHelper.recreateIfNotInCorrectLanguage(this, TextSecurePreferences.getLanguage(this));
+    //DynamicLanguageActivityHelper.recreateIfNotInCorrectLanguage(this, TextSecurePreferences.getLanguage(this));
     String name = getResources().getString(R.string.app_name);
     Bitmap icon = BitmapFactory.decodeResource(getResources(), R.drawable.ic_launcher_foreground);
     int color = getResources().getColor(R.color.app_icon_background);

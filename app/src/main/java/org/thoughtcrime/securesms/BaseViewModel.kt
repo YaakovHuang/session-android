@@ -9,7 +9,6 @@ import kotlinx.coroutines.Deferred
 import kotlinx.coroutines.Dispatchers
 import org.thoughtcrime.securesms.database.room.DaoHelper
 import org.thoughtcrime.securesms.util.coroutine.Coroutine
-import org.thoughtcrime.securesms.wallet.Wallet
 import kotlin.coroutines.CoroutineContext
 
 /**
@@ -20,7 +19,9 @@ open class BaseViewModel(application: Application) : AndroidViewModel(applicatio
 
     val context: Context by lazy { this.getApplication<ApplicationContext>() }
 
-    var wallet: Wallet = DaoHelper.loadDefaultWallet()
+    val wallet by lazy {
+        DaoHelper.loadDefaultWallet()
+    }
 
     fun <T> execute(
         scope: CoroutineScope = viewModelScope,

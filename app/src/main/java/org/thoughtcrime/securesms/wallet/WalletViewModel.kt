@@ -5,6 +5,7 @@ import androidx.lifecycle.MutableLiveData
 import network.qki.messenger.R
 import org.session.libsession.utilities.TextSecurePreferences
 import org.thoughtcrime.securesms.BaseViewModel
+import org.thoughtcrime.securesms.crypto.IdentityKeyUtil
 import org.thoughtcrime.securesms.database.room.AppDataBase
 import org.thoughtcrime.securesms.database.room.DaoHelper
 import org.thoughtcrime.securesms.net.network.ApiService
@@ -28,6 +29,8 @@ class WalletViewModel(application: Application) : BaseViewModel(application) {
     val nativeTokenLiveData = MutableLiveData<Token>()
     val saveStatusLiveData = MutableLiveData<Boolean>()
     val rpcDelayLiveData = MutableLiveData<Rpc>()
+    var configLiveData = MutableLiveData<AppConfig>()
+    var initWalletLiveData = MutableLiveData<Boolean?>()
     var errorCode = MutableLiveData<Int>()
 
     var pageNum = 1
@@ -44,6 +47,29 @@ class WalletViewModel(application: Application) : BaseViewModel(application) {
             }
             config
         }.onSuccess {
+            configLiveData.postValue(it)
+        }.onError {
+            Logger.e(it.message)
+        }
+    }
+
+    fun initWallet(onStart: () -> Unit) {
+        execute {
+            val chains = DaoHelper.loadAllChains()
+            if (!chains.isNullOrEmpty()) {
+                val wallet = DaoHelper.loadDefaultWallet()
+                if (wallet == null) {
+                    var seed = IdentityKeyUtil.retrieve(context, IdentityKeyUtil.LOKI_SEED)
+                    WalletService.initWallet(seed)
+                }
+                true
+            } else {
+                false
+            }
+        }.onStart {
+            onStart.invoke()
+        }.onSuccess {
+            initWalletLiveData.postValue(it)
         }.onError {
             Logger.e(it.message)
         }
@@ -51,9 +77,20 @@ class WalletViewModel(application: Application) : BaseViewModel(application) {
 
     fun initWallet(seed: String) {
         execute {
-            WalletService.initWallet(this, seed)
+            val chains = DaoHelper.loadAllChains()
+            if (!chains.isNullOrEmpty()) {
+                val wallet = DaoHelper.loadDefaultWallet()
+                if (wallet == null) {
+                    WalletService.initWallet(seed)
+                }
+                true
+            } else {
+                false
+            }
         }.onSuccess {
+            initWalletLiveData.postValue(true)
         }.onError {
+            initWalletLiveData.postValue(false)
             Logger.e(it.message)
         }
     }

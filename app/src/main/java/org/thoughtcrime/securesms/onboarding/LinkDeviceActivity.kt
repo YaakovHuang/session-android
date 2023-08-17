@@ -11,15 +11,11 @@ import android.view.inputmethod.EditorInfo
 import android.view.inputmethod.InputMethodManager
 import android.widget.Toast
 import androidx.activity.viewModels
-import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentPagerAdapter
 import androidx.lifecycle.lifecycleScope
-import com.google.android.material.snackbar.Snackbar
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.Job
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.launch
 import network.qki.messenger.R
 import network.qki.messenger.databinding.ActivityLinkDeviceBinding
@@ -35,6 +31,7 @@ import org.thoughtcrime.securesms.ApplicationContext
 import org.thoughtcrime.securesms.BaseActionBarActivity
 import org.thoughtcrime.securesms.crypto.KeyPairUtilities
 import org.thoughtcrime.securesms.crypto.MnemonicUtilities
+import org.thoughtcrime.securesms.home.HomeActivity
 import org.thoughtcrime.securesms.util.ScanQRCodeWrapperFragment
 import org.thoughtcrime.securesms.util.ScanQRCodeWrapperFragmentDelegate
 import org.thoughtcrime.securesms.util.push
@@ -50,6 +47,9 @@ class LinkDeviceActivity : BaseActionBarActivity(), ScanQRCodeWrapperFragmentDel
         get() = SnodeModule.shared.storage
     private val adapter = LinkDeviceActivityAdapter(this)
     private var restoreJob: Job? = null
+
+    private lateinit var seed: ByteArray
+
 
     override fun onBackPressed() {
         if (restoreJob?.isActive == true) return // Don't allow going back with a pending job
@@ -70,6 +70,29 @@ class LinkDeviceActivity : BaseActionBarActivity(), ScanQRCodeWrapperFragmentDel
         setContentView(binding.root)
         binding.viewPager.adapter = adapter
         binding.tabLayout.setupWithViewPager(binding.viewPager)
+        walletViewModel.initWalletLiveData.observe(this) {
+            if (it == true) {
+                // This is here to resolve a case where the app restarts before a user completes onboarding
+                // which can result in an invalid database state
+                database.clearAllLastMessageHashes()
+                database.clearReceivedMessageHashValues()
+                // RestoreActivity handles seed this way
+                val keyPairGenerationResult = KeyPairUtilities.generate(seed)
+                val x25519KeyPair = keyPairGenerationResult.x25519KeyPair
+                KeyPairUtilities.store(this@LinkDeviceActivity, seed, keyPairGenerationResult.ed25519KeyPair, x25519KeyPair)
+                val userHexEncodedPublicKey = x25519KeyPair.hexEncodedPublicKey
+                val registrationID = KeyHelper.generateRegistrationId(false)
+                TextSecurePreferences.setLocalRegistrationId(this@LinkDeviceActivity, registrationID)
+                TextSecurePreferences.setLocalNumber(this@LinkDeviceActivity, userHexEncodedPublicKey)
+                TextSecurePreferences.setRestorationTime(this@LinkDeviceActivity, System.currentTimeMillis())
+                TextSecurePreferences.setHasViewedSeed(this@LinkDeviceActivity, true)
+                register()
+                // start polling and wait for updated message
+                ApplicationContext.getInstance(this@LinkDeviceActivity).apply {
+                    startPollingIfNeeded()
+                }
+            }
+        }
     }
     // endregion
 
@@ -102,53 +125,24 @@ class LinkDeviceActivity : BaseActionBarActivity(), ScanQRCodeWrapperFragmentDel
         if (restoreJob?.isActive == true) return
 
         restoreJob = lifecycleScope.launch {
-            // This is here to resolve a case where the app restarts before a user completes onboarding
-            // which can result in an invalid database state
-            database.clearAllLastMessageHashes()
-            database.clearReceivedMessageHashValues()
-
-            // RestoreActivity handles seed this way
-            val keyPairGenerationResult = KeyPairUtilities.generate(seed)
-            val x25519KeyPair = keyPairGenerationResult.x25519KeyPair
-            KeyPairUtilities.store(this@LinkDeviceActivity, seed, keyPairGenerationResult.ed25519KeyPair, x25519KeyPair)
+            this@LinkDeviceActivity.seed = seed
             walletViewModel.initWallet(Hex.toStringCondensed(seed))
-            val userHexEncodedPublicKey = x25519KeyPair.hexEncodedPublicKey
-            val registrationID = KeyHelper.generateRegistrationId(false)
-            TextSecurePreferences.setLocalRegistrationId(this@LinkDeviceActivity, registrationID)
-            TextSecurePreferences.setLocalNumber(this@LinkDeviceActivity, userHexEncodedPublicKey)
-            TextSecurePreferences.setRestorationTime(this@LinkDeviceActivity, System.currentTimeMillis())
-            TextSecurePreferences.setHasViewedSeed(this@LinkDeviceActivity, true)
-            binding.loader.isVisible = true
-            val snackBar = Snackbar.make(binding.containerLayout, R.string.activity_link_device_skip_prompt, Snackbar.LENGTH_INDEFINITE)
-                .setAction(R.string.registration_activity__skip) { register(true) }
-
-            val skipJob = launch {
-                delay(30_000L)
-                snackBar.show()
-                // show a dialog or something saying do you want to skip this bit?
-            }
-            // start polling and wait for updated message
-            ApplicationContext.getInstance(this@LinkDeviceActivity).apply {
-                startPollingIfNeeded()
-            }
-            TextSecurePreferences.events.filter { it == TextSecurePreferences.CONFIGURATION_SYNCED }.collect {
-                // handle we've synced
-                snackBar.dismiss()
-                skipJob.cancel()
-                register(false)
-            }
-
-            binding.loader.isVisible = false
         }
     }
 
-    private fun register(skipped: Boolean) {
+    private fun register() {
         restoreJob?.cancel()
-        binding.loader.isVisible = false
         TextSecurePreferences.setLastConfigurationSyncTime(this, System.currentTimeMillis())
-        val intent = Intent(this@LinkDeviceActivity, if (skipped) DisplayNameActivity::class.java else PNModeActivity::class.java)
-        intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+        TextSecurePreferences.setProfileName(this, "")
+        TextSecurePreferences.setHasSeenWelcomeScreen(this, true)
+        TextSecurePreferences.setIsUsingFCM(this, true)
+        val application = ApplicationContext.getInstance(this)
+        application.startPollingIfNeeded()
+        application.registerForFCMIfNeeded(true)
+        val intent = Intent(this, HomeActivity::class.java)
+        //intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
         push(intent)
+        finish()
     }
     // endregion
 }

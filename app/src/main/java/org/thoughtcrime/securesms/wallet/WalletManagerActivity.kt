@@ -48,20 +48,30 @@ class WalletManagerActivity : PassphraseRequiredActionBarActivity() {
                 }
             }
             llPk.setOnClickListener {
-                XPopup.Builder(this@WalletManagerActivity)
-                    .enableDrag(false)
-                    .asCustom(PasswordPopupView(this@WalletManagerActivity) {
-                        val intent = Intent(this@WalletManagerActivity, ViewPkActivity::class.java)
-                        show(intent)
-                    }).show()
+                if (viewModel.wallet.pwd.isNullOrEmpty()) {
+                    val intent = Intent(this@WalletManagerActivity, PasswordActivity::class.java)
+                    show(intent)
+                } else {
+                    XPopup.Builder(this@WalletManagerActivity)
+                        .enableDrag(false)
+                        .asCustom(PasswordPopupView(this@WalletManagerActivity) {
+                            val intent = Intent(this@WalletManagerActivity, ViewPkActivity::class.java)
+                            show(intent)
+                        }).show()
+                }
             }
             llMnemonic.setOnClickListener {
-                XPopup.Builder(this@WalletManagerActivity)
-                    .enableDrag(false)
-                    .asCustom(PasswordPopupView(this@WalletManagerActivity) {
-                        val intent = Intent(this@WalletManagerActivity, ViewMnemonicActivity::class.java)
-                        show(intent)
-                    }).show()
+                if (viewModel.wallet.pwd.isNullOrEmpty()) {
+                    val intent = Intent(this@WalletManagerActivity, PasswordActivity::class.java)
+                    show(intent)
+                } else {
+                    XPopup.Builder(this@WalletManagerActivity)
+                        .enableDrag(false)
+                        .asCustom(PasswordPopupView(this@WalletManagerActivity) {
+                            val intent = Intent(this@WalletManagerActivity, ViewMnemonicActivity::class.java)
+                            show(intent)
+                        }).show()
+                }
             }
             llRpc.setOnClickListener {
                 val intent = Intent(this@WalletManagerActivity, RpcActivity::class.java)

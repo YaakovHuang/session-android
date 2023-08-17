@@ -1,17 +1,11 @@
 package org.thoughtcrime.securesms.home
 
-import android.content.Intent
-import android.content.res.ColorStateList
 import android.os.Bundle
-import android.view.View
-import android.widget.ImageView
-import android.widget.TextView
+import android.view.MenuItem
 import androidx.activity.viewModels
 import androidx.core.content.ContextCompat
 import androidx.core.view.isVisible
 import com.azhon.appupdate.manager.DownloadManager
-import com.google.android.material.tabs.TabLayout
-import com.google.android.material.tabs.TabLayoutMediator
 import dagger.hilt.android.AndroidEntryPoint
 import network.qki.messenger.BuildConfig
 import network.qki.messenger.R
@@ -31,7 +25,6 @@ import org.thoughtcrime.securesms.database.GroupDatabase
 import org.thoughtcrime.securesms.database.MmsSmsDatabase
 import org.thoughtcrime.securesms.database.RecipientDatabase
 import org.thoughtcrime.securesms.database.ThreadDatabase
-import org.thoughtcrime.securesms.wallet.web3.DAppWebActivity
 import org.thoughtcrime.securesms.util.StatusBarUtil
 import org.thoughtcrime.securesms.util.toastOnUi
 import org.thoughtcrime.securesms.wallet.WalletViewModel
@@ -59,21 +52,7 @@ class HomeActivity : PassphraseRequiredActionBarActivity() {
     @Inject
     lateinit var textSecurePreferences: TextSecurePreferences
 
-    private val viewModel by viewModels<HomeViewModel>()
-    private val walletViewModel by viewModels<WalletViewModel>()
-
-
-    private var tabTitles = arrayOf(
-        R.string.activity_settings_chats_button_title,
-        R.string.menu_dao,
-        R.string.activity_settings_title
-    )
-
-    private var tabIcons = arrayOf(
-        R.drawable.bg_nav_tab_0,
-        R.drawable.bg_nav_tab_1,
-        R.drawable.bg_nav_tab_2
-    )
+    private val viewModel by viewModels<WalletViewModel>()
 
     private var lastPressTime: Long = 0
 
@@ -81,18 +60,36 @@ class HomeActivity : PassphraseRequiredActionBarActivity() {
         ManagerViewPagerAdapter(this)
     }
 
-    // region Lifecycle
     override fun onCreate(savedInstanceState: Bundle?, isReady: Boolean) {
         super.onCreate(savedInstanceState, isReady)
         binding = ActivityHomeBinding.inflate(layoutInflater)
         setContentView(binding.root)
-        viewModel.initWallet()
-        binding.viewpager.offscreenPageLimit = 3
+        StatusBarUtil.setStatusColor(this@HomeActivity, false, TextSecurePreferences.CLASSIC_DARK != getThemeStyle(this@HomeActivity), getColorFromAttr(R.attr.commonToolbarColor))
         binding.viewpager.adapter = viewPagerAdapter
         binding.viewpager.isUserInputEnabled = false
-        intTabLayout()
-        checkUpdate()
-        loadConfig()
+        binding.viewpager.offscreenPageLimit = 2
+        binding.bottomNavigationView.setOnItemSelectedListener { item: MenuItem ->
+            return@setOnItemSelectedListener when (item.itemId) {
+                R.id.menu_chat -> {
+                    binding.viewpager.setCurrentItem(0, false)
+                    StatusBarUtil.setStatusColor(this@HomeActivity, false, TextSecurePreferences.CLASSIC_DARK != getThemeStyle(this@HomeActivity), getColorFromAttr(R.attr.commonToolbarColor))
+                    true
+                }
+
+                R.id.menu_et -> {
+                    binding.viewpager.setCurrentItem(1, false)
+                    StatusBarUtil.setStatusColor(this@HomeActivity, false, TextSecurePreferences.CLASSIC_DARK != getThemeStyle(this@HomeActivity), getColorFromAttr(R.attr.commonToolbarColor))
+                    true
+                }
+
+                R.id.menu_me -> {
+                    binding.viewpager.setCurrentItem(2, false)
+                    StatusBarUtil.setStatusColor(this@HomeActivity, true, false, ContextCompat.getColor(this@HomeActivity, R.color.core_white))
+                    true
+                }
+                else -> false
+            }
+        }
     }
 
     override fun onBackPressed() {
@@ -103,20 +100,14 @@ class HomeActivity : PassphraseRequiredActionBarActivity() {
         } else if (now - lastPressTime < 2 * 1000) super.onBackPressed()
     }
 
-    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        super.onActivityResult(requestCode, resultCode, data)
-        if (supportFragmentManager.fragments.isNotEmpty()) {
-            val currentItem = binding.viewpager.currentItem
-            val fragment = supportFragmentManager.fragments[currentItem]
-            if (fragment is SettingFragment) {
-                fragment.onActivityResult(requestCode, resultCode, data)
-            }
-        }
+    override fun initData() {
+        checkUpdate()
+        loadConfig()
+    }
 
-        when (requestCode) {
-            DAppWebActivity.FINISH -> {
-                binding.viewpager.currentItem = 0
-            }
+    override fun initObserver() {
+        viewModel.configLiveData.observe(this) {
+            viewModel.initWallet {}
         }
     }
 
@@ -173,65 +164,11 @@ class HomeActivity : PassphraseRequiredActionBarActivity() {
     }
 
     private fun loadConfig() {
-        walletViewModel.loadConfig()
-    }
-
-    private fun intTabLayout() {
-        binding.viewpager.adapter = viewPagerAdapter
-        TabLayoutMediator(binding.tabLayout, binding.viewpager, false, false) { tab, position ->
-            tab.text = getString(tabTitles[position])
-        }.attach()
-        binding.tabLayout.addOnTabSelectedListener(object : TabLayout.OnTabSelectedListener {
-            // 页面被选中
-            override fun onTabSelected(tab: TabLayout.Tab) {
-                val tvTitle = tab.customView?.findViewById<TextView>(R.id.tvTitle)
-                val ivIcon = tab?.customView?.findViewById<ImageView>(R.id.ivIcon)
-                tvTitle?.visibility = View.GONE
-                tvTitle?.setTextColor(getColorFromAttr(R.attr.reverseMainColor))
-                ivIcon?.imageTintList = ColorStateList.valueOf(getColorFromAttr(R.attr.reverseMainColor))
-                if (tab.position === 0) {
-                    StatusBarUtil.setStatusColor(this@HomeActivity, false, TextSecurePreferences.CLASSIC_DARK != getThemeStyle(this@HomeActivity), getColorFromAttr(R.attr.commonToolbarColor))
-                } else if (tab.position === 2) {
-                    StatusBarUtil.setStatusColor(this@HomeActivity, true, false, ContextCompat.getColor(this@HomeActivity, R.color.core_white))
-                } else {
-                    StatusBarUtil.setStatusColor(this@HomeActivity, false, TextSecurePreferences.CLASSIC_DARK != getThemeStyle(this@HomeActivity), getColorFromAttr(R.attr.commonToolbarColor))
-                }
-
-            }
-
-            // 页面切换到其他
-            override fun onTabUnselected(tab: TabLayout.Tab) {
-                val tvTitle = tab.customView?.findViewById<TextView>(R.id.tvTitle)
-                val ivIcon = tab?.customView?.findViewById<ImageView>(R.id.ivIcon)
-                tvTitle?.visibility = View.GONE
-                tvTitle?.setTextColor(R.color.color91979D)
-                ivIcon?.imageTintList = getColorStateList(R.color.color91979D)
-            }
-
-            override fun onTabReselected(tab: TabLayout.Tab) {}
-        })
-        for (i in tabTitles.indices) {
-            val tab = binding.tabLayout.getTabAt(i)
-            tab?.setCustomView(R.layout.item_home_tab)
-            val tvTitle = tab?.customView?.findViewById<TextView>(R.id.tvTitle)
-            val ivIcon = tab?.customView?.findViewById<ImageView>(R.id.ivIcon)
-            tvTitle?.text = getString(tabTitles[i])
-            tvTitle?.visibility = View.GONE
-            tvTitle?.setTextColor(R.color.color91979D)
-            ivIcon?.imageTintList = getColorStateList(R.color.color91979D)
-            ivIcon?.setImageResource(tabIcons[i])
-            if (i == 0) {
-                tvTitle?.visibility = View.GONE
-                tvTitle?.setTextColor(getColorFromAttr(R.attr.reverseMainColor))
-                ivIcon?.imageTintList =  ColorStateList.valueOf(getColorFromAttr(R.attr.reverseMainColor))
-                StatusBarUtil.setStatusColor(this, false, TextSecurePreferences.CLASSIC_DARK != getThemeStyle(this), getColorFromAttr(R.attr.commonToolbarColor))
-            }
-        }
-        binding.tabLayout.getTabAt(0)?.select()
+        viewModel.loadConfig()
     }
 
     fun showTabLayout(isShow: Boolean) {
-        binding.tabLayout.isVisible = isShow
+        binding.bottomNavigationView.isVisible = isShow
     }
 
 

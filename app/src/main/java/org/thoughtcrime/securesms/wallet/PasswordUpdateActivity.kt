@@ -77,7 +77,7 @@ class PasswordUpdateActivity : PassphraseRequiredActionBarActivity() {
                         pwd = MD5Utils.md5(pwd1)
                         DaoHelper.updateWallet(wallet)
                         toastOnUi(getString(R.string.pwd_modify_success))
-                        EventBus.getDefault().post(WalletUpdateEvent(null))
+                        EventBus.getDefault().post(WalletUpdateEvent(DaoHelper.loadDefaultWallet()))
                         finish()
                     }
                 } else {

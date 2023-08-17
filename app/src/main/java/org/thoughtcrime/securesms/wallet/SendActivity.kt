@@ -45,6 +45,12 @@ class SendActivity : PassphraseRequiredActionBarActivity() {
 
     private val account by lazy { DaoHelper.loadSelectAccount() }
 
+    companion object {
+        // Extras
+        const val KEY_TO = "to"
+
+    }
+
     private val qrResult = registerForActivityResult(QrCodeResult()) {
         it ?: return@registerForActivityResult
         if (WalletUtils.isValidAddress(it)) {
@@ -67,7 +73,7 @@ class SendActivity : PassphraseRequiredActionBarActivity() {
         }
         if (!this::token.isInitialized) {
             token = nativeToken
-            intent.getStringExtra("to")?.let {
+            intent.getStringExtra(KEY_TO)?.let {
                 binding.etTo.setText(it)
             }
         }
@@ -275,7 +281,7 @@ class SendActivity : PassphraseRequiredActionBarActivity() {
 
     @Subscribe(threadMode = ThreadMode.MAIN)
     fun onEvent(event: WalletUpdateEvent) {
-        viewModel.wallet = DaoHelper.loadDefaultWallet()
+        viewModel.wallet.pwd = event.wallet?.pwd ?: ""
     }
 
 

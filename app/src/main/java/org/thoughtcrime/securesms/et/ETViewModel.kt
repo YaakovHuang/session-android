@@ -114,7 +114,7 @@ class ETViewModel(application: Application) : BaseViewModel(application) {
             }
 
         }.onError {
-            context.toastOnUi(it.message)
+            Logger.e(it.message)
         }
     }
 

@@ -12,6 +12,8 @@ import java.math.BigDecimal
 class TokenAdapter : BaseQuickAdapter<Token, BaseViewHolder>(R.layout.item_token) {
 
 
+    private var isHide: Boolean = false
+
     override fun onItemViewHolderCreated(viewHolder: BaseViewHolder, viewType: Int) {
         ItemTokenBinding.bind(viewHolder.itemView)
     }
@@ -20,16 +22,27 @@ class TokenAdapter : BaseQuickAdapter<Token, BaseViewHolder>(R.layout.item_token
         with(ItemTokenBinding.bind(holder.itemView)) {
             GlideHelper.showImage(
                 ivLogo,
-                item.icon ?: "",
+                item.icon,
                 100,
                 R.drawable.ic_pic_default_round,
                 R.drawable.ic_pic_default_round
             )
             tvName.text = item.symbol
-            tvPrice.text = "\$ 0"
-            tvAmount.text = "${EthereumUtil.format(BigDecimal(item.balance), item.decimals, AppConst.SHOW_DECIMAL)}"
-            tvValue.text = "\$ ${item.value}"
+            if (isHide) {
+                tvPrice.text = context.getString(R.string.content_hide)
+                tvAmount.text = context.getString(R.string.content_hide)
+                tvValue.text = context.getString(R.string.content_hide)
+            } else {
+                tvPrice.text = "\$ 0"
+                tvAmount.text = "${EthereumUtil.format(BigDecimal(item.balance), item.decimals, AppConst.SHOW_DECIMAL)}"
+                tvValue.text = "\$ ${item.value}"
+            }
         }
+    }
+
+    fun setHide(isHide: Boolean) {
+        this.isHide = isHide
+        notifyDataSetChanged()
     }
 
 }

@@ -8,21 +8,18 @@ import androidx.viewpager2.adapter.FragmentStateAdapter
  * Created by Yaakov on
  * Describe:
  */
-class ManagerViewPagerAdapter(fragmentActivity: FragmentActivity) :
-    FragmentStateAdapter(fragmentActivity) {
-    private val fragments: MutableList<Fragment> = ArrayList()
-
-    init {
-        fragments.add(ChatsFragment())
-        fragments.add(DaoFragment())
-        fragments.add(MeFragment())
-    }
+class ManagerViewPagerAdapter(activity: FragmentActivity) : FragmentStateAdapter(activity) {
 
     override fun createFragment(position: Int): Fragment {
-        return fragments[position]
+        when (position) {
+            0 -> return ChatsFragment()
+            1 -> return DaoFragment()
+            2 -> return MeFragment()
+        }
+        return ChatsFragment()
     }
 
     override fun getItemCount(): Int {
-        return fragments.size
+        return 3
     }
 }
