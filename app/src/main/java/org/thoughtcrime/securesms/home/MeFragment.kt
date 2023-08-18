@@ -47,7 +47,7 @@ class MeFragment : BaseFragment<ETViewModel>(R.layout.fragment_me) {
         EventBus.getDefault().register(this)
         initView()
         initObserver()
-        initData()
+        loadData()
     }
 
     override fun onDestroy() {
@@ -119,31 +119,20 @@ class MeFragment : BaseFragment<ETViewModel>(R.layout.fragment_me) {
         }
     }
 
-    private fun initData() {
-        walletViewModel.initWallet {}
-    }
-
     private fun initObserver() {
         viewModel.userInfoLiveData.observe(viewLifecycleOwner) {
             stopRefreshing(binding.swipeRefreshLayout)
             if (it?.user != null) {
                 user = it.user
-                updateUI(it.user)
+                updateUI(user)
                 viewModel.updateLocalUser(it.user)
-            }
-        }
-        walletViewModel.initWalletLiveData.observe(viewLifecycleOwner) {
-            if (it == true) {
-                binding.stateLayout.showContentView()
-                loadData()
-            } else {
-                binding.stateLayout.showEmptyView()
             }
         }
     }
 
     private fun loadData() {
-        if (walletViewModel.initWalletLiveData.value == true) {
+        walletViewModel.loadAllPrices()
+        if (walletViewModel.wallet.address.isNotEmpty()) {
             viewModel.loadUserInfo({
                 if (isFirst) {
                     binding.stateLayout.showProgressView()
@@ -156,16 +145,16 @@ class MeFragment : BaseFragment<ETViewModel>(R.layout.fragment_me) {
         }
     }
 
-    private fun updateUI(user: User) {
+    private fun updateUI(user: User?) {
         with(binding) {
             GlideHelper.showImage(
                 ivAvatar, user?.Avatar ?: "", 100, R.drawable.ic_pic_default_round, R.drawable.ic_pic_default_round
             )
-            tvName.text = user.Nickname
+            tvName.text = user?.Nickname
             tvId.text = "Session ID: ${TextSecurePreferences.getLocalNumber(requireContext())}"
-            tvFollowNum.text = "${user.FollowCount}"
-            tvFollowerNum.text = "${user.FansCount}"
-            tvMoments.text = "${user.TwCount}"
+            tvFollowNum.text = "${user?.FollowCount}"
+            tvFollowerNum.text = "${user?.FansCount}"
+            tvMoments.text = "${user?.TwCount}"
             tvAddress.text = "${viewModel.wallet?.address?.formatAddress()}"
         }
     }

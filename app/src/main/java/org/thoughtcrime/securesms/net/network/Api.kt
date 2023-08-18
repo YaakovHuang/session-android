@@ -8,6 +8,7 @@ import org.thoughtcrime.securesms.et.Nonce
 import org.thoughtcrime.securesms.et.User
 import org.thoughtcrime.securesms.et.UserInfo
 import org.thoughtcrime.securesms.wallet.AppConfig
+import org.thoughtcrime.securesms.wallet.Price
 import org.thoughtcrime.securesms.wallet.Transaction
 import retrofit2.http.*
 
@@ -106,6 +107,11 @@ interface Api {
     @Headers(URL_WALLET)
     @GET("/api/v1/app_config")
     suspend fun loadConfig(@Query("device_id") deviceId: String, @Query("model") model: String, @Query("source") source: String): BaseWalletResponse<AppConfig?>
+
+    @Headers(URL_WALLET)
+    @FormUrlEncoded
+    @POST("/api/v1/assets_type/coins_price")
+    suspend fun loadTokenPrice(@Field("symbol") symbol : String): BaseWalletResponse<List<Price>?>
 
 
     @Headers(URL_ETH_SCAN)

@@ -40,7 +40,7 @@ class NetworkApi : BaseNetworkApi() {
             }
             //超时时间 连接、读、写
             connectTimeout(60, TimeUnit.SECONDS)
-            readTimeout(5, TimeUnit.SECONDS)
+            readTimeout(60, TimeUnit.SECONDS)
             writeTimeout(60, TimeUnit.SECONDS)
         }
         return builder

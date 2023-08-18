@@ -67,7 +67,7 @@ class HomeActivity : PassphraseRequiredActionBarActivity() {
         StatusBarUtil.setStatusColor(this@HomeActivity, false, TextSecurePreferences.CLASSIC_DARK != getThemeStyle(this@HomeActivity), getColorFromAttr(R.attr.commonToolbarColor))
         binding.viewpager.adapter = viewPagerAdapter
         binding.viewpager.isUserInputEnabled = false
-        binding.viewpager.offscreenPageLimit = 2
+        binding.viewpager.offscreenPageLimit = 1
         binding.bottomNavigationView.setOnItemSelectedListener { item: MenuItem ->
             return@setOnItemSelectedListener when (item.itemId) {
                 R.id.menu_chat -> {

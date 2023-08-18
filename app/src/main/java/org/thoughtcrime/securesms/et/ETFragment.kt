@@ -8,7 +8,6 @@ import android.view.View
 import androidx.fragment.app.viewModels
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.lxj.xpopup.XPopup
-import dagger.hilt.android.AndroidEntryPoint
 import network.qki.messenger.R
 import network.qki.messenger.databinding.FragmentEtBinding
 import network.qki.messenger.databinding.LayoutStatelayoutEmptyBinding
@@ -23,7 +22,6 @@ import org.thoughtcrime.securesms.util.viewbindingdelegate.viewBinding
  * Created by Yaakov on
  * Describe:
  */
-@AndroidEntryPoint
 class ETFragment : BaseFragment<ETViewModel>(R.layout.fragment_et) {
 
     private val binding by viewBinding(FragmentEtBinding::bind)

@@ -34,6 +34,22 @@ object DaoHelper {
         return AppDataBase.getInstance().tokenDao().loadTokens(account.chain_id!!)
     }
 
+    fun loadAllTokens(): List<Token> {
+        return AppDataBase.getInstance().tokenDao().loadAllTokens()
+    }
+
+    fun loadTotalValue(): String {
+        return AppDataBase.getInstance().tokenDao().loadTotalValue()
+    }
+
+    fun loadTotalValue(chainId: Int): String {
+        return AppDataBase.getInstance().tokenDao().loadTotalValue(chainId)
+    }
+
+    fun updateTokens(tokens: List<Token>) {
+        return AppDataBase.getInstance().tokenDao().update(*tokens.toTypedArray())
+    }
+
     fun loadToken(contract: String): Token {
         return AppDataBase.getInstance().tokenDao().loadToken(contract)
     }

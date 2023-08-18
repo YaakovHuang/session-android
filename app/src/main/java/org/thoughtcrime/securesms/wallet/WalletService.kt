@@ -50,7 +50,6 @@ object WalletService {
         val address = Keys.toChecksumAddress(credentials.address)
         var wallet = Wallet(0, DeviceUtils.randomKey, KeyStoreUtils.encrypt(mnemonic), KeyStoreUtils.encrypt(pk), address, "")
         AppDataBase.getInstance().walletDao().insert(wallet)
-
         // init accounts
         val chains = AppDataBase.getInstance().chainDao().loadAll()
         chains?.forEachIndexed { index, chain ->
@@ -220,6 +219,5 @@ private fun Response<String>.parseValues(outParams: List<TypeReference<Type<*>>>
     if (outParams.isEmpty()) {
         return emptyList()
     }
-    Logger.d(result)
     return FunctionReturnDecoder.decode(result, outParams).map { it.value }
 }

@@ -91,6 +91,15 @@ data class Chain(
     var rpc: List<Rpc>? = null
 }
 
+@Parcelize
+data class Price(
+    var chain_id: Int,
+    var assets_name: String? = "",
+    var symbol: String?,
+    var contract: String?,
+    var price: String?
+) : Parcelable
+
 @Entity
 @Parcelize
 data class Transaction(

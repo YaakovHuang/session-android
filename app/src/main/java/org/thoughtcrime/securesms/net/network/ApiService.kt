@@ -9,6 +9,7 @@ import org.thoughtcrime.securesms.et.Nonce
 import org.thoughtcrime.securesms.et.User
 import org.thoughtcrime.securesms.et.UserInfo
 import org.thoughtcrime.securesms.wallet.AppConfig
+import org.thoughtcrime.securesms.wallet.Price
 import org.thoughtcrime.securesms.wallet.Token
 import org.thoughtcrime.securesms.wallet.Transaction
 
@@ -92,6 +93,10 @@ class ApiService {
 
     suspend fun loadConfig(deviceId: String, model: String, source: String): AppConfig? {
         return api.loadConfig(deviceId, model, source).data
+    }
+
+    suspend fun loadTokenPrice(symbol: String): List<Price>? {
+        return api.loadTokenPrice(symbol).data
     }
 
     suspend fun loadTransactions(address: String, token: Token, page: Int): List<Transaction>? {

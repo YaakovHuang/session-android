@@ -30,6 +30,8 @@ class WalletActivity : PassphraseRequiredActionBarActivity() {
 
     private val viewModel by viewModels<WalletViewModel>()
 
+    private var isFirst = true
+
     private val adapter by lazy {
         TokenAdapter()
     }
@@ -127,7 +129,11 @@ class WalletActivity : PassphraseRequiredActionBarActivity() {
     }
 
     override fun initData() {
-        super.initData()
+        if (isFirst) {
+            viewModel.loadLocalTokens()
+            isFirst = false
+        }
+        viewModel.loadAllPrices()
         viewModel.loadTokens()
     }
 
@@ -161,8 +167,7 @@ class WalletActivity : PassphraseRequiredActionBarActivity() {
         )
         binding.ivView.isChecked = TextSecurePreferences.isHide(this)
         binding.tvChainName.text = chain.chain_name
-        // TODO:
-        binding.tvValue.text = if (TextSecurePreferences.isHide(this)) getString(R.string.content_hide) else "0"
+        binding.tvValue.text = if (TextSecurePreferences.isHide(this)) getString(R.string.content_hide) else DaoHelper.loadTotalValue(DaoHelper.loadSelectAccount().chain_id)
     }
 
 }

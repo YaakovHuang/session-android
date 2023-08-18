@@ -36,4 +36,13 @@ abstract class TokenDao {
     @Query("select * from token where chain_id = :chainId and isNative = :isNative limit 1")
     abstract fun loadToken(chainId: Int, isNative: Boolean): Token
 
+    @Query("select * from token")
+    abstract fun loadAllTokens(): List<Token>
+
+    @Query("select sum(value) from token where `chain_id` = :chainId")
+    abstract fun loadTotalValue(chainId: Int): String
+
+    @Query("select sum(value) from token")
+    abstract fun loadTotalValue(): String
+
 }

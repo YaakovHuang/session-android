@@ -2,10 +2,11 @@ package org.thoughtcrime.securesms.wallet
 
 import android.app.Application
 import androidx.lifecycle.MutableLiveData
+import kotlinx.coroutines.async
+import kotlinx.coroutines.awaitAll
 import network.qki.messenger.R
 import org.session.libsession.utilities.TextSecurePreferences
 import org.thoughtcrime.securesms.BaseViewModel
-import org.thoughtcrime.securesms.crypto.IdentityKeyUtil
 import org.thoughtcrime.securesms.database.room.AppDataBase
 import org.thoughtcrime.securesms.database.room.DaoHelper
 import org.thoughtcrime.securesms.net.network.ApiService
@@ -30,7 +31,6 @@ class WalletViewModel(application: Application) : BaseViewModel(application) {
     val saveStatusLiveData = MutableLiveData<Boolean>()
     val rpcDelayLiveData = MutableLiveData<Rpc>()
     var configLiveData = MutableLiveData<AppConfig>()
-    var initWalletLiveData = MutableLiveData<Boolean?>()
     var errorCode = MutableLiveData<Int>()
 
     var pageNum = 1
@@ -53,44 +53,27 @@ class WalletViewModel(application: Application) : BaseViewModel(application) {
         }
     }
 
-    fun initWallet(onStart: () -> Unit) {
+    fun loadAllPrices() {
         execute {
-            val chains = DaoHelper.loadAllChains()
-            if (!chains.isNullOrEmpty()) {
-                val wallet = DaoHelper.loadDefaultWallet()
-                if (wallet == null) {
-                    var seed = IdentityKeyUtil.retrieve(context, IdentityKeyUtil.LOKI_SEED)
-                    WalletService.initWallet(seed)
+            val tokens = DaoHelper.loadAllTokens()
+            var symbols = mutableListOf<String>()
+            tokens?.forEach { token ->
+                if (token.symbol.isNotEmpty()) {
+                    symbols.add(token.symbol)
                 }
-                true
-            } else {
-                false
             }
-        }.onStart {
-            onStart.invoke()
-        }.onSuccess {
-            initWalletLiveData.postValue(it)
-        }.onError {
-            Logger.e(it.message)
-        }
-    }
-
-    fun initWallet(seed: String) {
-        execute {
-            val chains = DaoHelper.loadAllChains()
-            if (!chains.isNullOrEmpty()) {
-                val wallet = DaoHelper.loadDefaultWallet()
-                if (wallet == null) {
-                    WalletService.initWallet(seed)
+            val prices = apiService.loadTokenPrice(symbols.joinToString(","))
+            prices?.forEach {
+                for (token in tokens) {
+                    if (token.symbol == it.symbol && token.contract.lowercase() == it.contract?.lowercase() && token.chain_id == it.chain_id) {
+                        token.price = it.price ?: "0"
+                        break
+                    }
                 }
-                true
-            } else {
-                false
             }
+            DaoHelper.updateTokens(tokens)
         }.onSuccess {
-            initWalletLiveData.postValue(true)
         }.onError {
-            initWalletLiveData.postValue(false)
             Logger.e(it.message)
         }
     }
@@ -115,23 +98,7 @@ class WalletViewModel(application: Application) : BaseViewModel(application) {
         onFinally: () -> Unit
     ) {
         execute {
-            if (token.isNative) {
-                val ethResponse = WalletService.getBalance(
-                    wallet.address,
-                    token
-                )
-                token.balance = ethResponse.stripTrailingZeros().toPlainString()
-            } else {
-                val ethResponse = WalletService.ethCall(
-                    token.chain_id,
-                    wallet.address,
-                    token.contract,
-                    FunctionUtils.encodeBalanceOf(wallet.address)
-                )
-                token.balance =
-                    (ethResponse.values[0] as BigInteger).toBigDecimal().stripTrailingZeros()
-                        .toPlainString()
-            }
+            val token = loadTokenBalance(token)
             Logger.d("${token.symbol} = ${token.balance}")
             token
         }.onStart {
@@ -145,9 +112,27 @@ class WalletViewModel(application: Application) : BaseViewModel(application) {
         }
     }
 
-    fun loadTokens() {
+    fun loadLocalTokens() {
         execute {
             DaoHelper.loadTokens()
+        }.onSuccess {
+            tokensLiveData.postValue(it)
+        }.onError {
+            Logger.e(it.message)
+        }
+    }
+
+    fun loadTokens() {
+        execute {
+            var tokens = DaoHelper.loadTokens()
+            tokens.map { token ->
+                async {
+                    var token = loadTokenBalance(token)
+                    token.value = EthereumUtil.format(BigDecimal(token.price).multiply(BigDecimal(token.balance)), token.decimals, 2) ?: "0.00"
+                    DaoHelper.updateToken(token)
+                    token
+                }
+            }.awaitAll()
         }.onSuccess {
             tokensLiveData.postValue(it)
         }.onError {
@@ -397,5 +382,22 @@ class WalletViewModel(application: Application) : BaseViewModel(application) {
         txsLiveData.postValue(availableTxs)
     }
 
-
+    private fun loadTokenBalance(token: Token): Token {
+        if (token.isNative) {
+            val ethResponse = WalletService.getBalance(wallet.address, token)
+            token.balance = ethResponse.stripTrailingZeros().toPlainString()
+        } else {
+            val ethResponse = WalletService.ethCall(token.chain_id, wallet.address, token.contract, FunctionUtils.encodeBalanceOf(wallet.address))
+            token.balance = if (ethResponse.values.isNullOrEmpty()) {
+                BigInteger.ZERO.toString()
+            } else {
+                try {
+                    (ethResponse.values[0] as BigInteger).toBigDecimal().stripTrailingZeros().toPlainString()
+                } catch (e: Exception) {
+                    "0"
+                }
+            }
+        }
+        return token
+    }
 }
