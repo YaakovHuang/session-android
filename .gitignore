@@ -16,5 +16,5 @@ ffpr
 *.sh
 pkcs11.password
 play
-app/website/release
+app/website/
 app/key.jks

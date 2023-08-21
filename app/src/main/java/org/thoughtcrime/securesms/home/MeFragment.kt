@@ -3,6 +3,7 @@ package org.thoughtcrime.securesms.home
 import android.content.Intent
 import android.os.Bundle
 import android.view.View
+import androidx.core.content.ContextCompat
 import androidx.fragment.app.viewModels
 import com.lxj.xpopup.XPopup
 import dagger.hilt.android.AndroidEntryPoint
@@ -20,6 +21,7 @@ import org.thoughtcrime.securesms.et.ETViewModel
 import org.thoughtcrime.securesms.et.User
 import org.thoughtcrime.securesms.et.UserUpdateEvent
 import org.thoughtcrime.securesms.util.GlideHelper
+import org.thoughtcrime.securesms.util.StatusBarUtil
 import org.thoughtcrime.securesms.util.formatAddress
 import org.thoughtcrime.securesms.util.sendToClip
 import org.thoughtcrime.securesms.util.viewbindingdelegate.viewBinding
@@ -48,6 +50,11 @@ class MeFragment : BaseFragment<ETViewModel>(R.layout.fragment_me) {
         initView()
         initObserver()
         loadData()
+    }
+
+    override fun onResume() {
+        super.onResume()
+        StatusBarUtil.setStatusColor(activity, true, false, ContextCompat.getColor(requireContext(), R.color.core_white))
     }
 
     override fun onDestroy() {

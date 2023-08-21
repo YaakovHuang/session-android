@@ -44,6 +44,11 @@ class TokenInfoActivity : PassphraseRequiredActionBarActivity() {
         } ?: finish()
     }
 
+    override fun onResume() {
+        super.onResume()
+        initData()
+    }
+
     override fun initViews() {
         super.initViews()
         setSupportActionBar(binding.toolbar)

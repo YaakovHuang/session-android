@@ -30,8 +30,6 @@ class WalletActivity : PassphraseRequiredActionBarActivity() {
 
     private val viewModel by viewModels<WalletViewModel>()
 
-    private var isFirst = true
-
     private val adapter by lazy {
         TokenAdapter()
     }
@@ -129,11 +127,8 @@ class WalletActivity : PassphraseRequiredActionBarActivity() {
     }
 
     override fun initData() {
-        if (isFirst) {
-            viewModel.loadLocalTokens()
-            isFirst = false
-        }
         viewModel.loadAllPrices()
+        viewModel.loadLocalTokens()
         viewModel.loadTokens()
     }
 

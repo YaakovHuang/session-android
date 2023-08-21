@@ -14,6 +14,8 @@ import androidx.activity.viewModels
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentPagerAdapter
 import androidx.lifecycle.lifecycleScope
+import com.google.zxing.Result
+import com.king.zxing.CameraScan
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
@@ -32,13 +34,12 @@ import org.thoughtcrime.securesms.BaseActionBarActivity
 import org.thoughtcrime.securesms.crypto.KeyPairUtilities
 import org.thoughtcrime.securesms.crypto.MnemonicUtilities
 import org.thoughtcrime.securesms.home.HomeActivity
-import org.thoughtcrime.securesms.util.ScanQRCodeWrapperFragment
-import org.thoughtcrime.securesms.util.ScanQRCodeWrapperFragmentDelegate
 import org.thoughtcrime.securesms.util.push
 import org.thoughtcrime.securesms.wallet.WalletViewModel
+import org.thoughtcrime.securesms.wallet.qrcode.ScanQrCodeFragment
 
 @AndroidEntryPoint
-class LinkDeviceActivity : BaseActionBarActivity(), ScanQRCodeWrapperFragmentDelegate {
+class LinkDeviceActivity : BaseActionBarActivity(), CameraScan.OnScanResultCallback {
     private lateinit var binding: ActivityLinkDeviceBinding
 
     private val walletViewModel by viewModels<WalletViewModel>()
@@ -94,11 +95,12 @@ class LinkDeviceActivity : BaseActionBarActivity(), ScanQRCodeWrapperFragmentDel
             }
         }
     }
-    // endregion
 
-    // region Interaction
-    override fun handleQRCodeScanned(mnemonic: String) {
-        continueWithMnemonic(mnemonic)
+    override fun onScanResultCallback(result: Result?): Boolean {
+        result?.run {
+            continueWithMnemonic(text)
+        }
+        return true
     }
 
     fun continueWithMnemonic(mnemonic: String) {
@@ -158,13 +160,7 @@ private class LinkDeviceActivityAdapter(private val activity: LinkDeviceActivity
     override fun getItem(index: Int): Fragment {
         return when (index) {
             0 -> recoveryPhraseFragment
-            1 -> {
-                val result = ScanQRCodeWrapperFragment()
-                result.delegate = activity
-                result.message = activity.getString(R.string.activity_link_device_qr_message)
-                result
-            }
-
+            1 -> ScanQrCodeFragment()
             else -> throw IllegalStateException()
         }
     }

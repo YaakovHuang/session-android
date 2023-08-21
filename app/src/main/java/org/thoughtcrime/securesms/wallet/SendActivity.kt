@@ -304,6 +304,7 @@ class SendActivity : PassphraseRequiredActionBarActivity() {
                 XPopup.Builder(this@SendActivity)
                     .asCustom(
                         TransferSuccessPopupView(this@SendActivity, it, {
+                            finish()
                         }, {
                             var chain = DaoHelper.loadSelectChain()
                             val url = chain.browser + "/tx/" + it.hash
